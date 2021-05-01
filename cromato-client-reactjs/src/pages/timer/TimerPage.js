@@ -4,6 +4,7 @@ import './TimerPage.css';
 
 import ReportIcon from './images/icons/icon-report.svg';
 import SettingsIcon from './images/icons/icon-settings.svg';
+import LoginIcon from './images/icons/icon-login.svg';
 
 class TimerPage extends Component {
   state = {};
@@ -18,7 +19,7 @@ class TimerPage extends Component {
             <div className="right">
               <ActionButton text="Report" icon={ReportIcon} size="m" />
               <ActionButton text="Settings" icon={SettingsIcon} size="m" />
-              <ActionButton text="Login" icon={SettingsIcon} size="m" />
+              <ActionButton text="Login" icon={LoginIcon} size="m" />
             </div>
           </div>
         </header>

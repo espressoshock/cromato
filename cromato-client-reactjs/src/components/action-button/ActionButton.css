@@ -17,7 +17,7 @@
 }
 .action-button .icon {
   display: inline-block;
-  margin-right: 5px;
+  margin-right: 8px;
 }
 .action-button:hover {
   background-color: rgba(1, 1, 1, 0.1);
