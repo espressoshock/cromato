@@ -2,26 +2,48 @@ import { Component } from 'react';
 import './PomodoroTimer.css';
 
 class PomodoroTimer extends Component {
-  state = {};
+  state = {
+    states: ['idle', 'ready', 'active', 'task-expanded', 'break'],
+    cState: undefined,
+  };
+  componentDidMount() {
+    this.setState({ cState: 0 });
+  }
+
+  getTimerState = () => {
+    return this.state.states[this.state.cState];
+  };
+  onMouseEnter = (e) => {
+    this.setState({ cState: 1 });
+  };
+  onMouseLeave = (e) => {
+    this.setState({ cState: 0 });
+  };
+
   //states: idle, ready, active, task-expanded, break
   render() {
     return (
-      <div className="pomodoro-timer idle">
-        <div className="svg-wrapper">
+      <div className={`pomodoro-timer ${this.getTimerState()}`}>
+        <div
+          className="svg-wrapper"
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+        >
+          <div className="inner-panel"></div>
           <svg xmlns="http://www.w3.org/2000/svg" width="807px" height="740px">
-            <g className="mid-sect">
+            {/* <g className="mid-sect"> 
               <path
                 fill-rule="evenodd"
                 fill="rgb(155, 21, 49)"
                 d="M24.656,377.406 L781.813,377.406 L781.813,450.344 L24.656,450.344 L24.656,377.406 Z"
               />
-            </g>
+            </g>*/}
             <g className="top-sect">
-              <path
+              {/* <path
                 fill-rule="evenodd"
                 fill="rgb(155, 21, 49)"
                 d="M781.933,401.036 C781.933,419.287 759.513,375.975 759.513,375.975 L788.980,365.164 C788.980,365.164 781.933,382.786 781.933,401.036 ZM24.767,401.036 C24.767,382.786 17.720,365.164 17.720,365.164 L47.187,375.975 C47.187,375.975 24.767,419.287 24.767,401.036 Z"
-              />
+              /> */}
               <path
                 fill-rule="evenodd"
                 fill="rgb(133, 17, 44)"
@@ -139,7 +161,7 @@ class PomodoroTimer extends Component {
             <input
               type="text"
               className="task-name"
-              placeholder="Type to add a task..."
+              value={'Type to add a task...'}
             />
             <div className="task-completion">
               <div className="c-pomodoro">1</div>

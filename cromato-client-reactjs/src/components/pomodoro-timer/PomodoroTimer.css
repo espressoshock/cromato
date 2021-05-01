@@ -14,8 +14,51 @@
   height: 370px;
   margin: auto;
   margin-top: 5em;
+  overflow: hidden;
 }
-.pomodoro-timer .svg-wrapper svg {
+.pomodoro-timer .svg-wrapper .inner-panel {
+  background-color: #9b1531;
+  width: 378.5px;
+  height: 36px;
+  position: absolute;
+  left: 12.5px;
+  top: 189px;
+}
+.pomodoro-timer .svg-wrapper .top-sect,
+.pomodoro-timer .svg-wrapper .bottom-sect,
+.pomodoro-timer .svg-wrapper .peduncle-sect,
+.pomodoro-timer .inner-panel {
+  transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+
+.pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
+  transition: transform 0.8s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+/* ===============
+   IDLE rules
+   =============== */
+.pomodoro-timer.idle .interactive-controls .checkbox,
+.pomodoro-timer.idle .interactive-controls .task-completion {
+  display: none;
+}
+.pomodoro-timer.idle .interactive-controls {
+  text-align: center;
+  transform: translateX(20px);
+}
+/* ===============
+   READY rules
+   =============== */
+.pomodoro-timer.ready .svg-wrapper .top-sect,
+.pomodoro-timer.ready .svg-wrapper .peduncle-sect,
+.pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-30px);
+}
+.pomodoro-timer.ready .svg-wrapper .bottom-sect {
+  transform: translateY(30px);
+}
+.pomodoro-timer .svg-wrapper .inner-panel {
+  height: 85px;
+  top: 154px;
 }
 
 /* ===============
@@ -23,8 +66,27 @@
    =============== */
 .pomodoro-timer .interactive-controls {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 12px;
+  top: 196px;
+  width: 379px;
+}
+.pomodoro-timer .interactive-controls .checkbox {
+  width: 35px;
+  height: 35px;
+  background-color: #6c081d;
+  border-radius: 50%;
+  margin-left: 1em;
+  display: inline-block;
+}
+.pomodoro-timer .interactive-controls .task-name {
+  color: #ffc4b6;
+  background: none;
+  outline: none;
+  border: none;
+  font-weight: 900;
+  /*  position: relative;
+  left: 1em;
+  top: -15px; */
 }
 .pomodoro-timer .interactive-controls .task-name,
 .pomodoro-timer .interactive-controls .checkbox,
@@ -32,19 +94,28 @@
 .pomodoro-timer .interactive-controls .task-completion > div {
   display: inline-block;
 }
-
+.pomodoro-timer .interactive-controls .task-completion {
+  float: right;
+  margin-right: 1em;
+}
 /* ===============
    animations-declarations
    =============== */
+.pomodoro-timer .svg-wrapper .bottom-sect,
+.pomodoro-timer .svg-wrapper .top-sect,
+.pomodoro-timer .svg-wrapper .peduncle-sect {
+  animation-fill-mode: both !important;
+}
 .pomodoro-timer.idle .svg-wrapper .top-sect {
   animation-name: top-sect-idle;
-  animation-duration: 2s;
+  animation-duration: 3s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 .pomodoro-timer.idle .svg-wrapper .bottom-sect {
   animation-name: bottom-sect-idle;
-  animation-duration: 4s;
+  animation-duration: 3s;
+  animation-delay: 2s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
