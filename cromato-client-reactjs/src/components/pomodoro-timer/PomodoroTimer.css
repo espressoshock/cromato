@@ -1,11 +1,111 @@
+/* ===============
+   component
+   =============== */
 .pomodoro-timer {
+  position: relative;
+}
+.pomodoro-timer .svg-wrapper svg {
+  transform: scale(0.5);
+  transform-origin: top left;
 }
 .pomodoro-timer .svg-wrapper {
+  position: relative;
+  width: 403.5px;
+  height: 370px;
   margin: auto;
-  width: fit-content;
-  transform: scale(0.5);
+  margin-top: 5em;
 }
 .pomodoro-timer .svg-wrapper svg {
 }
-.pomodoro-timer .svg-wrapper .top-sect {
+
+/* ===============
+   interactive-controls
+   =============== */
+.pomodoro-timer .interactive-controls {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.pomodoro-timer .interactive-controls .task-name,
+.pomodoro-timer .interactive-controls .checkbox,
+.pomodoro-timer .interactive-controls .task-completion,
+.pomodoro-timer .interactive-controls .task-completion > div {
+  display: inline-block;
+}
+
+/* ===============
+   animations-declarations
+   =============== */
+.pomodoro-timer.idle .svg-wrapper .top-sect {
+  animation-name: top-sect-idle;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .svg-wrapper .bottom-sect {
+  animation-name: bottom-sect-idle;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .svg-wrapper .peduncle-sect {
+  animation-name: bottom-sect-idle;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-delay: 0.5s;
+}
+.pomodoro-timer.idle .svg-wrapper .shelf-arrow-control {
+  animation-name: shelf-control-idle;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+/* ===============
+   animations-keyframes
+   =============== */
+
+@keyframes top-sect-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes bottom-sect-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes peduncle-sect-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes shelf-control-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
