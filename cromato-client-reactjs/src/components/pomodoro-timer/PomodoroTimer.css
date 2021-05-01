@@ -35,8 +35,9 @@
   transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
 .pomodoro-timer .interactive-controls .lx-group,
-.pomodoro-timer .interactive-controls .task-completion {
-  transition: transform 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
+.pomodoro-timer .interactive-controls .task-completion,
+.pomodoro-timer .interactive-controls .checkbox {
+  transition: all 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
 /* ===============
    IDLE rules
@@ -53,6 +54,11 @@
 }
 .pomodoro-timer.idle .interactive-controls .task-completion {
   transform: translateX(100px);
+  opacity: 0;
+}
+.pomodoro-timer.idle .interactive-controls .checkbox {
+  transform: translateX(30px);
+  opacity: 0;
 }
 /* ===============
    READY rules
@@ -73,9 +79,12 @@
   fill: #c02243;
 }
 
+.pomodoro-timer.ready .interactive-controls .checkbox,
 .pomodoro-timer.ready .interactive-controls .task-completion {
   transform: translateX(0px);
+  opacity: 1;
 }
+
 /* ===============
    interactive-controls
    =============== */
