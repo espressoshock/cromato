@@ -1,0 +1,11 @@
+.pomodoro-timer {
+}
+.pomodoro-timer .svg-wrapper {
+  margin: auto;
+  width: fit-content;
+  transform: scale(0.5);
+}
+.pomodoro-timer .svg-wrapper svg {
+}
+.pomodoro-timer .svg-wrapper .top-sect {
+}
