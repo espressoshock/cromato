@@ -7,7 +7,7 @@ class PomodoroTimer extends Component {
     cState: undefined,
   };
   componentDidMount() {
-    this.setState({ cState: 1 });
+    this.setState({ cState: 0 });
   }
 
   getTimerState = () => {

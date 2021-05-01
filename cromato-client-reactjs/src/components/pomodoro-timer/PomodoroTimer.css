@@ -31,22 +31,28 @@
   transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
 
-.pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
+.pomodoro-timer .svg-wrapper .shelf-arrow-control {
   transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+.pomodoro-timer .interactive-controls .lx-group,
+.pomodoro-timer .interactive-controls .task-completion {
+  transition: transform 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
 /* ===============
    IDLE rules
    =============== */
 .pomodoro-timer.idle .interactive-controls .checkbox,
 .pomodoro-timer.idle .interactive-controls .task-completion {
-  display: none;
+  visibility: hidden;
 }
-.pomodoro-timer.idle .interactive-controls {
-  text-align: center;
-  transform: translateX(20px);
+.pomodoro-timer.idle .interactive-controls .lx-group {
+  transform: translateX(50px);
 }
 .pomodoro-timer.idle .svg-wrapper .shelf-arrow-control {
   fill: #c02243;
+}
+.pomodoro-timer.idle .interactive-controls .task-completion {
+  transform: translateX(100px);
 }
 /* ===============
    READY rules
@@ -60,13 +66,16 @@
   transform: translateY(35px);
 }
 .pomodoro-timer .svg-wrapper .inner-panel {
-  height: 85px;
+  height: 90px;
   top: 154px;
 }
 .pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
   fill: #c02243;
 }
 
+.pomodoro-timer.ready .interactive-controls .task-completion {
+  transform: translateX(0px);
+}
 /* ===============
    interactive-controls
    =============== */
@@ -75,8 +84,10 @@
   left: 12px;
   top: 196px;
   width: 379px;
+  height: 35px;
   display: flex;
   justify-content: space-between;
+  overflow: hidden;
 }
 .pomodoro-timer .interactive-controls .checkbox {
   width: 35px;
@@ -139,7 +150,7 @@
 .pomodoro-timer.idle .svg-wrapper .bottom-sect-anim {
   animation-name: bottom-sect-idle;
   animation-duration: 3s;
-  animation-delay: 0;
+  animation-delay: 1.5s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
@@ -173,13 +184,13 @@
 }
 @keyframes bottom-sect-idle {
   0% {
-    transform: translateY(10px);
+    transform: translateY(15px);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(30px);
   }
   100% {
-    transform: translateY(10px);
+    transform: translateY(15px);
   }
 }
 @keyframes peduncle-sect-idle {
