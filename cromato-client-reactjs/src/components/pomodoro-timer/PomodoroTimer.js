@@ -1,23 +1,48 @@
 import { Component } from 'react';
+import React from 'react';
 import './PomodoroTimer.css';
 
 class PomodoroTimer extends Component {
   state = {
-    states: ['idle', 'ready', 'active', 'task-expanded', 'break'],
+    states: ['idle', 'ready', 'active', 'working', 'task-expanded', 'break'],
+    cTask: {
+      id: undefined,
+      name: undefined,
+      dPomodoro: 25,
+      cPomodoros: 1,
+      tPomodoros: 1,
+    },
+    cTaskName: 'Do your homework',
     cState: undefined,
   };
+  constructor(props) {
+    super(props);
+    this.taskNameField = React.createRef();
+  }
   componentDidMount() {
-    this.setState({ cState: 0 });
+    this.setState({ cState: 2 });
   }
 
   getTimerState = () => {
     return this.state.states[this.state.cState];
   };
   onMouseEnter = (e) => {
+    //go to ready state
     this.setState({ cState: 1 });
+
+    //focus task field
+    this.taskNameField.current.focus();
+    this.taskNameField.current.setSelectionRange(0, 0);
   };
   onMouseLeave = (e) => {
     this.setState({ cState: 0 });
+  };
+  handleTaskNameChange = (e) => {
+    //go to active state
+    if (this.taskNameField.current.value.length > 0 && this.state.cState < 3)
+      this.setState({ cState: 3 });
+
+    this.setState({ cTaskName: e.value });
   };
 
   //states: idle, ready, active, task-expanded, break
@@ -148,6 +173,13 @@ class PomodoroTimer extends Component {
                 />
               </g>
             </g>
+            <g className="timer-scale">
+              <path
+                fill-rule="evenodd"
+                fill="rgb(131, 13, 38)"
+                d="M765.813,0.798 L765.813,22.487 C765.890,23.048 765.933,23.704 765.933,24.479 C765.933,42.729 772.980,60.351 772.980,60.351 L772.765,60.273 C773.507,62.281 773.980,64.650 774.025,67.466 C773.982,67.874 773.931,68.272 773.887,68.679 L0.812,68.679 C0.769,68.272 0.717,67.874 0.675,67.466 C0.720,64.650 1.193,62.281 1.935,60.273 L1.720,60.351 C1.720,60.351 7.732,45.304 8.647,28.619 L8.647,0.798 L765.813,0.798 Z"
+              />
+            </g>
           </svg>
           <div className="interactive-controls">
             <div className="lx-group">
@@ -157,7 +189,10 @@ class PomodoroTimer extends Component {
               <input
                 type="text"
                 className="task-name"
-                value={'Type to add a task...'}
+                placeholder={'Type to add a task...'}
+                value={this.state.cTaskName}
+                onChange={this.handleTaskNameChange}
+                ref={this.taskNameField}
               />
             </div>
             <div className="task-completion">

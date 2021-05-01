@@ -24,6 +24,22 @@
   left: 12.5px;
   top: 189px;
 }
+/* ===============
+   input placeholder
+   =============== */
+.pomodoro-timer .interactive-controls ::placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls :-ms-input-placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls ::-ms-input-placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+
 .pomodoro-timer .svg-wrapper .top-sect,
 .pomodoro-timer .svg-wrapper .bottom-sect,
 .pomodoro-timer .svg-wrapper .peduncle-sect,
@@ -71,7 +87,7 @@
 .pomodoro-timer.ready .svg-wrapper .bottom-sect {
   transform: translateY(35px);
 }
-.pomodoro-timer .svg-wrapper .inner-panel {
+.pomodoro-timer.ready .svg-wrapper .inner-panel {
   height: 90px;
   top: 154px;
 }
@@ -84,7 +100,34 @@
   transform: translateX(0px);
   opacity: 1;
 }
+/* ===============
+   ACTIVE rules
+   =============== */
 
+.pomodoro-timer.active .svg-wrapper .top-sect,
+.pomodoro-timer.active .svg-wrapper .peduncle-sect,
+.pomodoro-timer.active .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.active .svg-wrapper .bottom-sect {
+  transform: translateY(105px);
+}
+.pomodoro-timer.active .svg-wrapper .inner-panel {
+  height: 120px;
+  top: 154px;
+}
+.pomodoro-timer.active .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+}
+
+.pomodoro-timer.active .interactive-controls .checkbox,
+.pomodoro-timer.active .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.active .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+}
 /* ===============
    interactive-controls
    =============== */
