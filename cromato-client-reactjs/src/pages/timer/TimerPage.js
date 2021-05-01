@@ -7,10 +7,12 @@ class TimerPage extends Component {
     return (
       <div className="timer-page">
         <header>
-          <div className="left">
-            <div className="logo">Cromato</div>
+          <div className="menu">
+            <div className="left">
+              <div className="logo">Cromato</div>
+            </div>
+            <div className="right">Hello</div>
           </div>
-          <div className="right">Hello</div>
         </header>
         <div className="wrapper">Hello!</div>
       </div>
