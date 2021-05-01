@@ -4,8 +4,19 @@
   background-color: #821231;
 }
 .timer-page header {
-  background: blue;
   height: 70px;
+}
+.timer-page header .menu {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+}
+.timer-page header .menu .right {
+  float: right;
+  order: 2;
 }
 .timer-page header .logo {
   display: block;
@@ -15,11 +26,12 @@
   background: url('./images/cromato-logo.svg');
   background-size: 100px 82px;
 }
-.timer-page header .menu {
-  margin: auto;
-  width: fit-content;
-}
+
 .timer-page header .left,
 .timer-page header .right {
   display: inline-block;
+}
+.timer-page header .action-button {
+  display: inline-block;
+  margin-left: 1em;
 }
