@@ -1,0 +1,32 @@
+.action-button {
+  background-color: rgba(1, 1, 1, 0.2);
+  border-radius: 6px;
+  padding: 6px 15px;
+  cursor: pointer;
+  transition: background 0.4s ease;
+}
+.action-button .icon,
+.action-button .label {
+  display: inline-block;
+}
+.action-button .label {
+  color: #bda6ab;
+  font-weight: 700;
+  position: relative;
+  bottom: 5px;
+}
+.action-button .icon {
+  display: inline-block;
+  margin-right: 8px;
+}
+.action-button:hover {
+  background-color: rgba(1, 1, 1, 0.1);
+}
+.action-button.size-medium .icon {
+  width: 18px;
+  height: 18px;
+}
+.action-button.action-button.size-medium .label {
+  font-size: 14px;
+  bottom: 3.5px;
+}
