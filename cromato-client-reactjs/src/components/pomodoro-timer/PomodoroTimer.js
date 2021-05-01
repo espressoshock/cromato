@@ -7,7 +7,7 @@ class PomodoroTimer extends Component {
     cState: undefined,
   };
   componentDidMount() {
-    this.setState({ cState: 0 });
+    this.setState({ cState: 1 });
   }
 
   getTimerState = () => {
@@ -150,14 +150,16 @@ class PomodoroTimer extends Component {
             </g>
           </svg>
           <div className="interactive-controls">
-            <div className="checkbox">
-              <div className="icon"></div>
+            <div className="lx-group">
+              <div className="checkbox">
+                <div className="icon"></div>
+              </div>
+              <input
+                type="text"
+                className="task-name"
+                value={'Type to add a task...'}
+              />
             </div>
-            <input
-              type="text"
-              className="task-name"
-              value={'Type to add a task...'}
-            />
             <div className="task-completion">
               <div className="c-pomodoro">1</div>
               <div className="separator">/</div>
