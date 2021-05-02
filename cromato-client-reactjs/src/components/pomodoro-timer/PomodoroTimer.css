@@ -44,6 +44,17 @@
 .pomodoro-timer .pomodoro-text-counter.charged {
   cursor: pointer;
 }
+/* ===============
+     arrow-control
+     =============== */
+.pomodoro-timer .svg-wrapper .controls .shelf-arrow-control {
+  transform-origin: 52% 42%;
+}
+.pomodoro-timer .svg-wrapper .controls .shelf-arrow-control.skip-enabled {
+  transform: rotate(90deg);
+  fill: #ffc4b6;
+  cursor: pointer;
+}
 
 /* ===============
      input placeholder

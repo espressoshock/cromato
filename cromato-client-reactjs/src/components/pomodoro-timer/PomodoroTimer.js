@@ -173,6 +173,11 @@ class PomodoroTimer extends Component {
     this.setState({ working: true });
   };
 
+  arrowControlClicked = () => {
+    console.log('clicked');
+    this.stopTimer();
+  };
+
   //states: idle, ready, active, task-expanded, break
   render() {
     return (
@@ -288,7 +293,10 @@ class PomodoroTimer extends Component {
             <g className="controls">
               <g className="controls-anim">
                 <path
-                  className="shelf-arrow-control"
+                  className={`shelf-arrow-control ${
+                    this.state.cState === 3 ? 'skip-enabled' : ''
+                  } `}
+                  onClick={() => this.arrowControlClicked()}
                   fill-rule="evenodd"
                   d="M373.883,321.604 C376.804,317.612 392.179,291.801 396.303,285.091 C400.428,278.381 407.660,279.523 410.396,283.810 C413.133,288.097 430.852,317.236 433.457,321.604 C436.062,325.973 434.436,334.416 428.333,334.416 C420.261,334.416 384.947,334.416 379.648,334.416 C374.349,334.416 369.305,327.862 373.883,321.604 Z"
                 />
