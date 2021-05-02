@@ -7,6 +7,7 @@
 .pomodoro-timer .svg-wrapper svg {
   transform: scale(0.5);
   transform-origin: top left;
+  overflow: visible;
 }
 .pomodoro-timer .svg-wrapper {
   position: relative;
@@ -14,7 +15,6 @@
   height: 370px;
   margin: auto;
   margin-top: 5em;
-  overflow: hidden;
 }
 .pomodoro-timer .svg-wrapper .inner-panel {
   background-color: #9b1531;
@@ -23,6 +23,9 @@
   position: absolute;
   left: 12.5px;
   top: 189px;
+}
+.pomodoro-timer .svg-wrapper .timer-countdown {
+  transform: translate(222px, 499px);
 }
 /* ===============
      input placeholder
@@ -290,6 +293,13 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
+.pomodoro-timer.idle .svg-wrapper .timer-countdown {
+  animation-name: timer-countdown-idle;
+  animation-duration: 3s;
+  animation-delay: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
 /* ===============
      animations-keyframes
      =============== */
@@ -336,5 +346,16 @@
   }
   100% {
     transform: translateY(0px);
+  }
+}
+@keyframes timer-countdown-idle {
+  0% {
+    transform: translate(222px, 499px);
+  }
+  50% {
+    transform: translate(222px, 514px);
+  }
+  100% {
+    transform: translate(222px, 499px);
   }
 }
