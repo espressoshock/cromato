@@ -28,6 +28,19 @@
   transform: translate(222px, 499px);
 }
 /* ===============
+     pomodoro-text-counter
+     =============== */
+.pomodoro-timer .pomodoro-text-counter {
+  position: absolute;
+  left: 142px;
+  top: 277px;
+  z-index: 1;
+  color: #ffc4b6;
+  font-weight: 900;
+  font-size: 3em;
+  transform: translateY(3px);
+}
+/* ===============
      input placeholder
      =============== */
 .pomodoro-timer .interactive-controls .task-name::placeholder {
@@ -300,6 +313,13 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
+.pomodoro-timer.idle .pomodoro-text-counter {
+  animation-name: pomodoro-text-counter-idle;
+  animation-duration: 3s;
+  animation-delay: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
 /* ===============
      animations-keyframes
      =============== */
@@ -357,5 +377,16 @@
   }
   100% {
     transform: translate(222px, 499px);
+  }
+}
+@keyframes pomodoro-text-counter-idle {
+  0% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(11px);
+  }
+  100% {
+    transform: translateY(3px);
   }
 }

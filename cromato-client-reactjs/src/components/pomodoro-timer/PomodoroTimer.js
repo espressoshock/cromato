@@ -2,6 +2,8 @@ import { Component } from 'react';
 import React from 'react';
 import './PomodoroTimer.css';
 
+import CountUp from 'react-countup';
+
 class PomodoroTimer extends Component {
   state = {
     states: ['idle', 'ready', 'active', 'working', 'task-expanded', 'break'],
@@ -18,9 +20,13 @@ class PomodoroTimer extends Component {
   constructor(props) {
     super(props);
     this.taskNameField = React.createRef();
+    this.pomodoroTCounter = React.createRef();
   }
   componentDidMount() {
     this.setState({ cState: 0 });
+    //pause pomodoro textual counter
+    this.pomodoroTCounter.current.pauseResume();
+    console.log(this.pomodoroTCounter.current);
   }
 
   getTimerState = () => {
@@ -29,6 +35,8 @@ class PomodoroTimer extends Component {
   onMouseEnter = (e) => {
     //go to ready state
     this.setState({ cState: 1 });
+
+    this.pomodoroTCounter.current.start();
 
     //focus task field
     this.taskNameField.current.focus();
@@ -54,6 +62,27 @@ class PomodoroTimer extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
+          <CountUp
+            className="pomodoro-text-counter"
+            start={0.0}
+            end={25.0}
+            duration={2.75}
+            decimals={2}
+            decimal=":"
+            onEnd={() => console.log('Ended! 👏')}
+            onStart={() => console.log('Started! 💨')}
+            formattingFn={(n) => {
+              return n < 1
+                ? '00:00'
+                : n < 10
+                ? '0' + (n + '').replace('.', ':')
+                : n === 25
+                ? '25:00'
+                : (n + '').replace('.', ':');
+            }}
+            ref={this.pomodoroTCounter}
+          />
+
           <div className="inner-panel"></div>
           <svg xmlns="http://www.w3.org/2000/svg" width="807px" height="740px">
             <clipPath id="timerbar-clip">
