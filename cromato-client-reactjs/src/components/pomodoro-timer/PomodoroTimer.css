@@ -94,6 +94,12 @@
 .pomodoro-timer .svg-wrapper #timerbar-clip {
   transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1);
 }
+.pomodoro-timer.ready .svg-wrapper .timer-countdown {
+  transition: transform 0.6s cubic-bezier(0.75, -0.5, 0, 1.7);
+}
+.pomodoro-timer .pomodoro-text-counter {
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
 /* ===============
      pre-frame anim
      =============== */
@@ -167,6 +173,12 @@
   transform: translateX(0px);
   opacity: 1;
 }
+.pomodoro-timer.ready .pomodoro-text-counter {
+  transform: translateY(12px);
+}
+.pomodoro-timer.ready .svg-wrapper .timer-countdown {
+  transform: translate(222px, 514px);
+}
 
 /* ===============
      ACTIVE rules
@@ -203,10 +215,16 @@
   clip-path: url(#timerbar-clip);
 }
 .pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w {
-  transform: translateX(-850px);
+  transform: translateX(-880px);
 }
 .pomodoro-timer.active .svg-wrapper #timerbar-clip {
   transform: translateY(-1px);
+}
+.pomodoro-timer.active .pomodoro-text-counter {
+  transform: translateY(47px);
+}
+.pomodoro-timer.active .svg-wrapper .timer-countdown {
+  transform: translate(222px, 584px);
 }
 /* ===============
      interactive-controls

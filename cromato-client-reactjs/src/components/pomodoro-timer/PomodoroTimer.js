@@ -36,19 +36,22 @@ class PomodoroTimer extends Component {
     //go to ready state
     this.setState({ cState: 1 });
 
-    this.pomodoroTCounter.current.start();
-
     //focus task field
     this.taskNameField.current.focus();
     this.taskNameField.current.setSelectionRange(0, 0);
   };
   onMouseLeave = (e) => {
-    this.setState({ cState: 0 });
+    if (this.state.cTaskName.length > 0) this.setState({ cState: 1 });
+    else this.setState({ cState: 0 });
   };
   handleTaskNameChange = (e) => {
     //go to active state
-    if (this.taskNameField.current.value.length > 0 && this.state.cState < 2)
+    if (this.taskNameField.current.value.length > 0 && this.state.cState < 2) {
       this.setState({ cState: 2 });
+      setTimeout(() => {
+        this.pomodoroTCounter.current.start();
+      }, 100);
+    }
 
     this.setState({ cTaskName: e.value });
   };
@@ -66,7 +69,7 @@ class PomodoroTimer extends Component {
             className="pomodoro-text-counter"
             start={0.0}
             end={25.0}
-            duration={2.75}
+            duration={1.4}
             decimals={2}
             decimal=":"
             onEnd={() => console.log('Ended! 👏')}
