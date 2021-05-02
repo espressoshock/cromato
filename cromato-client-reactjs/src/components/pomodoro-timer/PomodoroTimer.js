@@ -33,8 +33,8 @@ class PomodoroTimer extends Component {
     return this.state.states[this.state.cState];
   };
   onMouseEnter = (e) => {
-    //go to ready state
-    this.setState({ cState: 1 });
+    //go to next state
+    this.setState({ cState: this.state.cState + 1 });
 
     //focus task field
     this.taskNameField.current.focus();
@@ -45,15 +45,15 @@ class PomodoroTimer extends Component {
     else this.setState({ cState: 0 });
   };
   handleTaskNameChange = (e) => {
+    this.setState({ cTaskName: e.target.value });
+    console.log(e.target.value);
     //go to active state
-    if (this.taskNameField.current.value.length > 0 && this.state.cState < 2) {
+    if (e.target.value.length > 0 && this.state.cState < 2) {
       this.setState({ cState: 2 });
       setTimeout(() => {
         this.pomodoroTCounter.current.start();
       }, 100);
     }
-
-    this.setState({ cTaskName: e.value });
   };
 
   //states: idle, ready, active, task-expanded, break
@@ -264,7 +264,7 @@ class PomodoroTimer extends Component {
                 className="task-name"
                 placeholder={'Type to add a task...'}
                 value={this.state.cTaskName}
-                onChange={this.handleTaskNameChange}
+                onChange={(e) => this.handleTaskNameChange(e)}
                 ref={this.taskNameField}
               />
             </div>
@@ -277,7 +277,7 @@ class PomodoroTimer extends Component {
                   className="a-pomodoroField"
                   placeholder={'3'}
                   value={this.state.tPomodoros}
-                  onChange={this.handleTotalPomodorosChange}
+                  onChange={(e) => this.handleTotalPomodorosChange(e)}
                   ref={this.tPomodorosField}
                 />
               </div>
