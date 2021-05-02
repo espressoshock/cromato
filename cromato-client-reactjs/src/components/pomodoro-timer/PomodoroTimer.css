@@ -279,6 +279,50 @@
 }
 
 /* ===============
+     paused rules
+     =============== */
+
+.pomodoro-timer.paused .svg-wrapper .top-sect,
+.pomodoro-timer.paused .svg-wrapper .peduncle-sect,
+.pomodoro-timer.paused .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.paused .svg-wrapper .bottom-sect {
+  transform: translateY(105px);
+}
+.pomodoro-timer.paused .svg-wrapper .inner-panel {
+  height: 120px;
+  top: 154px;
+}
+.pomodoro-timer.paused .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+}
+
+.pomodoro-timer.paused .interactive-controls .checkbox,
+.pomodoro-timer.paused .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.paused .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.paused .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+
+.pomodoro-timer.paused .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
+}
+.pomodoro-timer.paused .pomodoro-text-counter {
+  transform: translateY(47px);
+}
+.pomodoro-timer.paused .svg-wrapper .timer-countdown {
+  transform: translate(222px, 584px);
+}
+/* ===============
      interactive-controls
      =============== */
 .pomodoro-timer .interactive-controls {
@@ -406,6 +450,9 @@
   animation-delay: 0s;
   animation-timing-function: linear;
   animation-iteration-count: 1;
+}
+.pomodoro-timer .paused {
+  animation-play-state: paused;
 }
 /* ===============
      animations-keyframes

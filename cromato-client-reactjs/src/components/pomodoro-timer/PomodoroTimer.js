@@ -22,6 +22,9 @@ class PomodoroTimer extends Component {
     cState: undefined,
     counterCharged: false,
     working: false,
+    timerIntervalRef: undefined,
+    minutes: 0,
+    seconds: 0,
   };
   constructor(props) {
     super(props);
@@ -105,16 +108,29 @@ class PomodoroTimer extends Component {
       this.setState({ cState: 3 });
       this.setState({ working: true });
 
-      this.timer(60 * 25, this.pomodoroTCounter.current.containerRef.current);
+      this.startTimer(
+        60 * 25,
+        this.pomodoroTCounter.current.containerRef.current
+      );
+    } else {
+      if (this.state.cState === 3) {
+        if (this.state.working) this.stopTimer();
+        else
+          this.resumeTimer(this.pomodoroTCounter.current.containerRef.current);
+      }
     }
   };
-  timer = (duration, display) => {
+
+  startTimer = (duration, display) => {
+    console.log('start');
     let timer = duration,
       minutes,
       seconds;
-    setInterval(function () {
+    let si = setInterval(() => {
       minutes = parseInt(timer / 60, 10);
       seconds = parseInt(timer % 60, 10);
+      this.setState({ minutes: minutes });
+      this.setState({ seconds: seconds });
 
       minutes = minutes < 10 ? '0' + minutes : minutes;
       seconds = seconds < 10 ? '0' + seconds : seconds;
@@ -125,6 +141,36 @@ class PomodoroTimer extends Component {
         timer = duration;
       }
     }, 1000);
+    this.setState({ timerIntervalRef: si });
+  };
+  stopTimer = () => {
+    console.log('stop');
+    this.setState({ working: false });
+    clearInterval(this.state.timerIntervalRef);
+  };
+  resumeTimer = (display) => {
+    let duration = this.state.minutes * 60 + this.state.seconds;
+    console.log('resume', duration);
+    let timer = duration,
+      minutes,
+      seconds;
+    let si = setInterval(() => {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+      this.setState({ minutes: minutes });
+      this.setState({ seconds: seconds });
+
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+
+      display.textContent = minutes + ':' + seconds;
+
+      if (--timer < 0) {
+        timer = duration;
+      }
+    }, 1000);
+    this.setState({ timerIntervalRef: si });
+    this.setState({ working: true });
   };
 
   //states: idle, ready, active, task-expanded, break
@@ -298,7 +344,7 @@ class PomodoroTimer extends Component {
                 <g
                   className={`i-timerbar-w ${
                     this.state.cState === 3 ? 'working' : ''
-                  }`}
+                  } ${!this.state.working ? 'paused' : ''}`}
                 >
                   <path
                     fill-rule="evenodd"
