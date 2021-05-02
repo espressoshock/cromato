@@ -25,8 +25,8 @@
   top: 189px;
 }
 /* ===============
-   input placeholder
-   =============== */
+     input placeholder
+     =============== */
 .pomodoro-timer .interactive-controls ::placeholder {
   color: #ffc4b6;
   opacity: 1;
@@ -40,7 +40,7 @@
   opacity: 1;
 }
 
-.pomodoro-timer .svg-wrapper .top-sect,
+.podoro-timer .svg-wrapper .top-sect,
 .pomodoro-timer .svg-wrapper .bottom-sect,
 .pomodoro-timer .svg-wrapper .peduncle-sect,
 .pomodoro-timer .inner-panel {
@@ -55,18 +55,52 @@
 .pomodoro-timer .interactive-controls .checkbox {
   transition: all 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
+
+.pomodoro-timer .svg-wrapper .timer-scale {
+  transition: all 0.2s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transition: transform 1.5s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
+.pomodoro-timer .svg-wrapper #timerbar-clip {
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1);
+}
 /* ===============
-   IDLE rules
-   =============== */
+     pre-frame anim
+     =============== */
+.pomodoro-timer .svg-wrapper .timer-scale {
+  transform: translate(16px, 436px);
+  clip-path: url(#timerbar-clip);
+  opacity: 0;
+}
+.pomodoro-timer .svg-wrapper #timerbar-clip {
+  transform: translateY(-69px);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(0px);
+}
+
+/* ===============
+     IDLE rules
+     =============== */
 .pomodoro-timer.idle .interactive-controls .checkbox,
-.pomodoro-timer.idle .interactive-controls .task-completion {
-  visibility: hidden;
+.pomodoro-timer.idle .interactive-controls .task-completion,
+.pomodoro-timer.idle .timer-scale {
+  visibility: visible;
 }
 .pomodoro-timer.idle .interactive-controls .lx-group {
   transform: translateX(50px);
 }
 .pomodoro-timer.idle .svg-wrapper .shelf-arrow-control {
   fill: #c02243;
+}
+.pomodoro-timer.idle .svg-wrapper .inner-panel {
+  height: 85px;
+  top: 154px;
 }
 .pomodoro-timer.idle .interactive-controls .task-completion {
   transform: translateX(100px);
@@ -76,9 +110,13 @@
   transform: translateX(30px);
   opacity: 0;
 }
+
 /* ===============
-   READY rules
-   =============== */
+     READY rules
+     =============== */
+.pomodoro-timer.ready .svg-wrapper .timer-scale {
+  visibility: visible;
+}
 .pomodoro-timer.ready .svg-wrapper .top-sect,
 .pomodoro-timer.ready .svg-wrapper .peduncle-sect,
 .pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
@@ -100,9 +138,10 @@
   transform: translateX(0px);
   opacity: 1;
 }
+
 /* ===============
-   ACTIVE rules
-   =============== */
+     ACTIVE rules
+     =============== */
 
 .pomodoro-timer.active .svg-wrapper .top-sect,
 .pomodoro-timer.active .svg-wrapper .peduncle-sect,
@@ -127,10 +166,22 @@
 }
 .pomodoro-timer.active .svg-wrapper .timer-scale {
   transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(-850px);
+}
+.pomodoro-timer.active .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
 }
 /* ===============
-   interactive-controls
-   =============== */
+     interactive-controls
+     =============== */
 .pomodoro-timer .interactive-controls {
   position: absolute;
   left: 12px;
@@ -185,8 +236,8 @@
   white-space: pre;
 }
 /* ===============
-   animations-declarations
-   =============== */
+     animations-declarations
+     =============== */
 .pomodoro-timer .svg-wrapper .bottom-sect-anim,
 .pomodoro-timer .svg-wrapper .top-sect-anim,
 .pomodoro-timer .svg-wrapper .peduncle-sect-anim {
@@ -220,8 +271,8 @@
   animation-iteration-count: infinite;
 }
 /* ===============
-   animations-keyframes
-   =============== */
+     animations-keyframes
+     =============== */
 
 @keyframes top-sect-idle {
   0% {
