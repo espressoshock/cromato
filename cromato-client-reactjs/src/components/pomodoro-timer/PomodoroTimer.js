@@ -20,7 +20,7 @@ class PomodoroTimer extends Component {
     this.taskNameField = React.createRef();
   }
   componentDidMount() {
-    this.setState({ cState: 0 });
+    this.setState({ cState: 2 });
   }
 
   getTimerState = () => {
@@ -222,7 +222,16 @@ class PomodoroTimer extends Component {
             <div className="task-completion">
               <div className="c-pomodoro">1</div>
               <div className="separator">/</div>
-              <div className="a-pomodoro">3</div>
+              <div className="a-pomodoro">
+                <input
+                  type="text"
+                  className="a-pomodoroField"
+                  placeholder={'3'}
+                  value={this.state.tPomodoros}
+                  onChange={this.handleTotalPomodorosChange}
+                  ref={this.tPomodorosField}
+                />
+              </div>
             </div>
           </div>
         </div>
