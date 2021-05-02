@@ -27,6 +27,7 @@
 .pomodoro-timer .svg-wrapper .timer-countdown {
   transform: translate(222px, 499px);
 }
+
 /* ===============
      pomodoro-text-counter
      =============== */
@@ -40,6 +41,10 @@
   font-size: 3em;
   transform: translateY(3px);
 }
+.pomodoro-timer .pomodoro-text-counter.charged {
+  cursor: pointer;
+}
+
 /* ===============
      input placeholder
      =============== */
@@ -227,6 +232,53 @@
   transform: translate(222px, 584px);
 }
 /* ===============
+     working rules
+     =============== */
+
+.pomodoro-timer.working .svg-wrapper .top-sect,
+.pomodoro-timer.working .svg-wrapper .peduncle-sect,
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.working .svg-wrapper .bottom-sect {
+  transform: translateY(105px);
+}
+.pomodoro-timer.working .svg-wrapper .inner-panel {
+  height: 120px;
+  top: 154px;
+}
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+}
+
+.pomodoro-timer.working .interactive-controls .checkbox,
+.pomodoro-timer.working .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.working .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.working .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer.working .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(-880px);
+}
+.pomodoro-timer.working .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
+}
+.pomodoro-timer.working .pomodoro-text-counter {
+  transform: translateY(47px);
+}
+.pomodoro-timer.working .svg-wrapper .timer-countdown {
+  transform: translate(222px, 584px);
+}
+
+/* ===============
      interactive-controls
      =============== */
 .pomodoro-timer .interactive-controls {
@@ -338,6 +390,23 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
+.pomodoro-timer.ready .pomodoro-text-counter.charged {
+  animation-name: pomodoro-text-counter-charged;
+  animation-duration: 2s;
+  animation-delay: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.working
+  .svg-wrapper
+  .interactive-timerbar
+  .i-timerbar-w.working {
+  animation-name: timerbar-working;
+  animation-duration: 300s;
+  animation-delay: 0s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
 /* ===============
      animations-keyframes
      =============== */
@@ -406,5 +475,35 @@
   }
   100% {
     transform: translateY(3px);
+  }
+}
+@keyframes pomodoro-text-counter-charged {
+  0% {
+    transform: translateY(12px) scale(1);
+  }
+  50% {
+    transform: translateY(12px) scale(1.1);
+  }
+  100% {
+    transform: translateY(12px) scale(1);
+  }
+}
+@keyframes timer-countdown-charged {
+  0% {
+    transform: translate(222px, 514px) scale(1);
+  }
+  50% {
+    transform: translate(222px, 514px) scale(1.2);
+  }
+  100% {
+    transform: translate(222px, 514px) scale(1);
+  }
+}
+@keyframes timerbar-working {
+  0% {
+    transform: translateX(-880px);
+  }
+  100% {
+    transform: translateX(373px);
   }
 }

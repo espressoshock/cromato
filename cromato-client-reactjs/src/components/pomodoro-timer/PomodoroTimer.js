@@ -14,8 +14,14 @@ class PomodoroTimer extends Component {
       cPomodoros: 1,
       tPomodoros: 1,
     },
+    timerStart: 0.0,
+    timerEnd: 25.0,
+    timerDuration: 1.4,
+    timerEasing: true,
     cTaskName: '',
     cState: undefined,
+    counterCharged: false,
+    working: false,
   };
   constructor(props) {
     super(props);
@@ -26,7 +32,14 @@ class PomodoroTimer extends Component {
     this.setState({ cState: 0 });
     //pause pomodoro textual counter
     this.pomodoroTCounter.current.pauseResume();
-    console.log(this.pomodoroTCounter.current);
+
+    //on counter timer start
+    this.pomodoroTCounter.current.containerRef.current.addEventListener(
+      'click',
+      () => {
+        this.onCounterTimerStart();
+      }
+    );
   }
 
   getTimerState = () => {
@@ -34,26 +47,84 @@ class PomodoroTimer extends Component {
   };
   onMouseEnter = (e) => {
     //go to next state
-    this.setState({ cState: this.state.cState + 1 });
+
+    if (!this.state.working && this.state.cState < 4)
+      this.setState({ cState: this.state.cState + 1 });
 
     //focus task field
     this.taskNameField.current.focus();
-    this.taskNameField.current.setSelectionRange(0, 0);
   };
   onMouseLeave = (e) => {
-    if (this.state.cTaskName.length > 0) this.setState({ cState: 1 });
-    else this.setState({ cState: 0 });
+    console.log('log', this.state.cState);
+    //=TODO, this can be simplified
+    switch (this.state.cState) {
+      case 1:
+        this.setState({ cState: 0 });
+        break;
+      case 2:
+        this.setState({ cState: 1 });
+        break;
+      case 3:
+        if (!this.state.working) this.setState({ cState: 2 });
+        break;
+      default:
+    }
   };
   handleTaskNameChange = (e) => {
     this.setState({ cTaskName: e.target.value });
-    console.log(e.target.value);
+
+    //update counter charge state
+    if (e.target.value.length <= 0) this.setState({ counterCharged: false });
+
     //go to active state
-    if (e.target.value.length > 0 && this.state.cState < 2) {
+    if (e.target.value.length > 0 && this.state.cState <= 2) {
       this.setState({ cState: 2 });
       setTimeout(() => {
-        this.pomodoroTCounter.current.start();
+        this.pomodoroTCounter.current.update(25);
       }, 100);
     }
+  };
+
+  onCounterCharged = () => {
+    this.setState({ counterCharged: true });
+  };
+  onCounterTimerStart = () => {
+    if (this.state.counterCharged) {
+      //---> THIS LIB IS DOG SHIT //REWORK
+      /*  this.setState({ counterCharged: false });
+      this.setState({ timerStart: 25.0 });
+
+      this.setState({ timerDuration: 16000 });
+      this.setState({ timerEasing: false });
+      setTimeout(() => {
+        //  this.pomodoroTCounter.current.start();
+        this.pomodoroTCounter.current.update(0);
+      }, 1); */
+      console.log(this.pomodoroTCounter.current.containerRef.current);
+      this.setState({ counterCharged: false });
+      this.setState({ cState: 3 });
+      this.setState({ working: true });
+
+      this.timer(60 * 25, this.pomodoroTCounter.current.containerRef.current);
+    }
+  };
+  timer = (duration, display) => {
+    let timer = duration,
+      minutes,
+      seconds;
+    setInterval(function () {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+
+      display.textContent = minutes + ':' + seconds;
+
+      if (--timer < 0) {
+        timer = duration;
+      }
+    }, 1000);
   };
 
   //states: idle, ready, active, task-expanded, break
@@ -66,14 +137,17 @@ class PomodoroTimer extends Component {
           onMouseLeave={this.onMouseLeave}
         >
           <CountUp
-            className="pomodoro-text-counter"
-            start={0.0}
-            end={25.0}
-            duration={1.4}
+            className={`pomodoro-text-counter ${
+              this.state.counterCharged ? 'charged' : ''
+            }`}
+            start={this.state.timerStart || 0.0}
+            end={this.state.timerEnd || 25.0}
+            duration={this.state.timerDuration}
             decimals={2}
             decimal=":"
-            onEnd={() => console.log('Ended! 👏')}
-            onStart={() => console.log('Started! 💨')}
+            redraw={true}
+            useEasing={this.state.timerEasing}
+            preserveValue={false}
             formattingFn={(n) => {
               return n < 1
                 ? '00:00'
@@ -83,6 +157,7 @@ class PomodoroTimer extends Component {
                 ? '25:00'
                 : (n + '').replace('.', ':');
             }}
+            onEnd={() => this.onCounterCharged()}
             ref={this.pomodoroTCounter}
           />
 
@@ -220,7 +295,11 @@ class PomodoroTimer extends Component {
                 d="M765.813,0.798 L765.813,22.487 C765.890,23.048 765.933,23.704 765.933,24.479 C765.933,42.729 772.980,60.351 772.980,60.351 L772.765,60.273 C773.507,62.281 773.980,64.650 774.025,67.466 C773.982,67.874 773.931,68.272 773.887,68.679 L0.812,68.679 C0.769,68.272 0.717,67.874 0.675,67.466 C0.720,64.650 1.193,62.281 1.935,60.273 L1.720,60.351 C1.720,60.351 7.732,45.304 8.647,28.619 L8.647,0.798 L765.813,0.798 Z"
               />
               <g className="interactive-timerbar">
-                <g className="i-timerbar-w">
+                <g
+                  className={`i-timerbar-w ${
+                    this.state.cState === 3 ? 'working' : ''
+                  }`}
+                >
                   <path
                     fill-rule="evenodd"
                     className="scale"
@@ -236,7 +315,11 @@ class PomodoroTimer extends Component {
                 </g>
               </g>
             </g>
-            <g className="timer-countdown">
+            <g
+              className={`timer-countdown ${
+                this.state.counterCharged ? 'charged' : ''
+              }`}
+            >
               <path
                 fill-rule="evenodd"
                 fill="rgb(254, 127, 132)"
