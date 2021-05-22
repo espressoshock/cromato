@@ -31,9 +31,14 @@
 .timer-page header .right {
   display: inline-block;
 }
-.timer-page header .action-button {
+.timer-page header .action-button,
+.profile-thumb {
   display: inline-block;
   margin-left: 1em;
+}
+.timer-page header .profile-thumb {
+  position: relative;
+  top: 8px;
 }
 .timer-page .divider {
   width: 80%;

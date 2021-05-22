@@ -9,6 +9,7 @@ import PomodoroTimer from '../../components/pomodoro-timer/PomodoroTimer';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3pQsx-EOXyJoS4ckyTl-WUfULEJtBGJU',
@@ -24,30 +25,46 @@ const provider = new GoogleAuthProvider();
 const auth = getAuth();
 
 class TimerPage extends Component {
-  state = {};
-  componentDidMount() {}
+  state = {
+    auth: false,
+  };
+  componentDidMount() {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ auth: true });
+      } else {
+        this.setState({ auth: false });
+      }
+    });
+  }
   login = (e) => {
     console.log('login');
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
         console.log(credential);
+        console.log(auth.currentUser);
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
         console.log(error);
-        // ...
       });
+  };
+  renderLogin = () => {
+    console.log(this.state.auth);
+    if (this.state.auth) {
+      console.log(auth.currentUser);
+      return <ProfileThumb thumbURL={auth.currentUser.photoURL} />;
+    } else
+      return (
+        <ActionButton
+          text="Login"
+          icon={LoginIcon}
+          size="m"
+          onButtonClicked={(e) => {
+            this.login();
+          }}
+        />
+      );
   };
   render() {
     return (
@@ -60,14 +77,7 @@ class TimerPage extends Component {
             <div className="right">
               <ActionButton text="Report" icon={ReportIcon} size="m" />
               <ActionButton text="Settings" icon={SettingsIcon} size="m" />
-              <ActionButton
-                text="Login"
-                icon={LoginIcon}
-                size="m"
-                onButtonClicked={(e) => {
-                  this.login();
-                }}
-              />
+              {this.renderLogin()}
             </div>
           </div>
           <div className="divider"></div>
