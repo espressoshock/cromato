@@ -80,6 +80,9 @@ class PomodoroTimer extends Component {
 
     //focus task field
     this.taskNameField.current.focus();
+
+    if (this.props.aTask?.name && this.state.cState >= 2)
+      this.pomodoroTCounter.current.update(25);
   };
   ///////////////////////////////////
   ////////////////  ON-LEAVE-INTERACTION
@@ -92,10 +95,11 @@ class PomodoroTimer extends Component {
         if (!this.props.aTask) this.setState({ cState: 0 });
         break;
       case 2:
-        this.setState({ cState: 1 });
+        if (!this.state.working) this.setState({ cState: 1 });
         break;
       case 3:
-        if (!this.state.working) this.setState({ cState: 2 });
+        if (!this.state.working && !this.state.paused)
+          this.setState({ cState: 2 });
         break;
       default:
     }
@@ -207,9 +211,11 @@ class PomodoroTimer extends Component {
   stopTimer = () => {
     console.log('stop');
     this.setState({ working: false });
+    this.setState({ paused: true });
     clearInterval(this.state.timerIntervalRef);
   };
   resumeTimer = (display) => {
+    this.setState({ paused: false });
     let duration = this.state.minutes * 60 + this.state.seconds;
     console.log('resume', duration);
     let timer = duration,
