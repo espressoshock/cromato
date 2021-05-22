@@ -19,6 +19,7 @@ class PomodoroTimer extends Component {
     timerIntervalRef: undefined,
     minutes: 0, //timerMin
     seconds: 0, //timerSec
+    pomodoroEstimated: 3,
   };
   constructor(props) {
     super(props);
@@ -97,6 +98,25 @@ class PomodoroTimer extends Component {
         this.pomodoroTCounter.current.update(25);
       }, 100);
     }
+  };
+  handleTaskNameUpdate = (e) => {
+    //submit
+    this.props.onTaskNameChangeOrSubmit({
+      name: this.state.cTaskName,
+      pomodoroEstimated: this.state.pomodoroEstimated,
+    });
+  };
+
+  ///////////////////////////////////
+  ////////////////  E-POMODORO-CHANGE
+  ///////////////////////////////////
+  handleTotalPomodorosUpdate = (e) => {
+    this.props.onEstPomodorosUpdate({
+      pomodoroEstimated: this.state.pomodoroEstimated,
+    });
+  };
+  handleTotalPomodorosChange = (e) => {
+    this.setState({ pomodoroEstimated: e.target.value });
   };
 
   ///////////////////////////////////
@@ -218,6 +238,52 @@ class PomodoroTimer extends Component {
               onChange={(e) => this.handleTotalPomodorosChange(e)}
               ref={this.tPomodorosField}
             />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  renderTLTask = (task, i) => {
+    console.log('passed task', task);
+    return (
+      <div className="task active" key={i}>
+        <input type="hidden" value={task.id} className="tlID" />
+        <div className="left">
+          <div className="completed-checkbox"></div>
+          <input
+            type="text"
+            className="taskNameInput"
+            placeholder={task.name}
+          />
+        </div>
+        <div className="right">
+          <div className="pomodoroStat">
+            <div className="pomodoroElapsed">{task.pomodoroElapsed}</div>
+            <div className="separator">/</div>
+            <input
+              type="text"
+              className="pomodoroEstInput"
+              placeholder={task.pomodoroEstimated}
+            />
+          </div>
+          <div className="context-menu">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              class="feather feather-more-vertical"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
           </div>
         </div>
       </div>
@@ -454,19 +520,21 @@ class PomodoroTimer extends Component {
                   placeholder={'Type to add a task...'}
                   value={this.state.cTaskName}
                   onChange={(e) => this.handleTaskNameChange(e)}
+                  onBlur={(e) => this.handleTaskNameUpdate(e)}
                   ref={this.taskNameField}
                 />
               </div>
               <div className="task-completion">
-                <div className="c-pomodoro">1</div>
+                <div className="c-pomodoro">0</div>
                 <div className="separator">/</div>
                 <div className="a-pomodoro">
                   <input
                     type="text"
                     className="a-pomodoroField"
                     placeholder={'3'}
-                    value={this.state.tPomodoros}
+                    value={this.state.pomodoroEstimated}
                     onChange={(e) => this.handleTotalPomodorosChange(e)}
+                    onBlur={(e) => this.handleTotalPomodorosUpdate(e)}
                     ref={this.tPomodorosField}
                   />
                 </div>
@@ -487,9 +555,9 @@ class PomodoroTimer extends Component {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               class="feather feather-chevron-right"
             >
               <polyline points="9 18 15 12 9 6"></polyline>
@@ -501,41 +569,7 @@ class PomodoroTimer extends Component {
               <div className="divider"></div>
             </div>
             <div className="list">
-              <div className="task active">
-                <div className="left">
-                  <div className="completed-checkbox"></div>
-                  <input
-                    type="text"
-                    className="taskNameInput"
-                    value="Do your homework"
-                  />
-                </div>
-                <div className="right">
-                  <div className="pomodoroStat">
-                    <div className="pomodoroElapsed">2</div>
-                    <div className="separator">/</div>
-                    <input type="text" className="pomodoroEstInput" value="2" />
-                  </div>
-                  <div className="context-menu">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="feather feather-more-vertical"
-                    >
-                      <circle cx="12" cy="12" r="1"></circle>
-                      <circle cx="12" cy="5" r="1"></circle>
-                      <circle cx="12" cy="19" r="1"></circle>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              {this.props.tasks.map((item, i) => this.renderTLTask(item, i))}
               {/* SPECIAL TASK - ADD  */}
               <div className="task add-task">
                 <svg
@@ -545,9 +579,9 @@ class PomodoroTimer extends Component {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   class="feather feather-plus-square"
                   className="icon"
                 >
