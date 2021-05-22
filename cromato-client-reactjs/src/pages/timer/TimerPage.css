@@ -48,4 +48,5 @@
 }
 .timer-page .main-wrapper {
   height: calc(100% - 70px);
+  overflow-x: hidden;
 }

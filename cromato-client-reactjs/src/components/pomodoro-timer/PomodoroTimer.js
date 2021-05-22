@@ -25,6 +25,9 @@ class PomodoroTimer extends Component {
     this.taskNameField = React.createRef();
     this.pomodoroTCounter = React.createRef();
   }
+  openTaskList = (e) => {
+    this.setState({ isTaskListOpen: !this.state.isTaskListOpen });
+  };
   ///////////////////////////////////
   ////////////////  COMPONENTMOUNT
   ///////////////////////////////////
@@ -224,7 +227,11 @@ class PomodoroTimer extends Component {
   //states: idle, ready, active, task-expanded, break
   render() {
     return (
-      <div className={`pomodoro-timer ${this.getTimerState()}`}>
+      <div
+        className={`pomodoro-timer ${this.getTimerState()} ${
+          this.state.isTaskListOpen ? 'tl-open' : ''
+        }`}
+      >
         <div
           className="svg-wrapper"
           onMouseEnter={this.onMouseEnter}
@@ -435,7 +442,7 @@ class PomodoroTimer extends Component {
               />
             </g>
           </svg>
-          <div className="task-list-wrapper">
+          <div className="task-list-wrapper-dep">
             <div className="interactive-controls add-task">
               <div className="lx-group">
                 <div className="checkbox">
@@ -464,6 +471,93 @@ class PomodoroTimer extends Component {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="task-list-wrapper">
+          <div
+            className="shelf-control active"
+            onClick={(e) => {
+              this.openTaskList(e);
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather feather-chevron-right"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div className="task-list">
+            <div className="header">
+              <div className="title">Tasks</div>
+              <div className="divider"></div>
+            </div>
+            <div className="list">
+              <div className="task">
+                <div className="left">
+                  <div className="completed-checkbox"></div>
+                  <input
+                    type="text"
+                    className="taskNameInput"
+                    value="Do your homework"
+                  />
+                </div>
+                <div className="right">
+                  <div className="pomodoroStat">
+                    <div className="pomodoroElapsed">2</div>
+                    <div className="separator">/</div>
+                    <input type="text" className="pomodoroEstInput" value="2" />
+                  </div>
+                  <div className="context-menu">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="feather feather-more-vertical"
+                    >
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="12" cy="5" r="1"></circle>
+                      <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              {/* SPECIAL TASK - ADD  */}
+              <div className="task add-task">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-plus-square"
+                  className="icon"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="12" y1="8" x2="12" y2="16"></line>
+                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                <div className="label">Add Task</div>
+              </div>
+              {/* SPECIAL TASK - ADD  */}
             </div>
           </div>
         </div>
