@@ -698,6 +698,7 @@
   position: relative;
   right: 2px;
   top: 1px;
+  transform: scale(0.7);
 }
 .pomodoro-timer .task-list .task .context-menu:hover {
   background-color: rgb(223, 223, 223);

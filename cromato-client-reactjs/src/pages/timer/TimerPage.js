@@ -19,6 +19,7 @@ import {
   query,
   onSnapshot,
   serverTimestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -61,7 +62,8 @@ class TimerPage extends Component {
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
-          this.setState({ cTask: tTasks[0] });
+          if (this.state.tTask === undefined)
+            this.setState({ cTask: tTasks[0] });
         });
 
         /*   (async () => {
@@ -207,6 +209,33 @@ class TimerPage extends Component {
     console.log('clicked', task);
     this.setState({ cTask: task });
   };
+  onAddTask = (e) => {
+    //submit
+    const tTask = this.submitTask({
+      name: 'Sample task',
+      pomodoroElapsed: 0,
+      pomodoroEstimated: 3,
+      completed: false,
+    });
+    (async () => {
+      const docRef = await addDoc(
+        collection(db, `users/${auth.currentUser.uid}/tasks`),
+        tTask
+      );
+      this.setState({ cTask: { ...tTask, id: docRef.id } });
+      console.log('cTask: ', this.state.cTask);
+    })();
+  };
+  onTLTaskDelete = (id) => {
+    console.log('id', id);
+    (async () => {
+      const docRef = await deleteDoc(
+        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`)
+      );
+
+      console.log('document updated');
+    })();
+  };
   render() {
     return (
       <div className="timer-page">
@@ -231,6 +260,8 @@ class TimerPage extends Component {
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}
             onTLTaskClicked={(e) => this.onTLTaskClicked(e)}
+            onAddTask={(e) => this.onAddTask(e)}
+            onTLTaskDelete={(e) => this.onTLTaskDelete(e)}
           />
         </div>
       </div>
