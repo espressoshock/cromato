@@ -394,6 +394,12 @@
   border-width: 0px 3px 3px 0px;
   transform: rotate(45deg);
 }
+.pomodoro-timer .interactive-controls .checkbox.completed {
+  background-color: #ffff;
+}
+.pomodoro-timer .interactive-controls .checkbox.completed::after {
+  border-color: #9b1531;
+}
 .pomodoro-timer .interactive-controls .task-name,
 .pomodoro-timer .interactive-controls .a-pomodoroField {
   background: none;
@@ -710,6 +716,7 @@
   border-radius: 50%;
   display: inline-block;
   order: 0;
+  z-index: 5;
 }
 .pomodoro-timer .task-list .task .completed-checkbox::after {
   content: '';
@@ -723,6 +730,13 @@
   border-image: initial;
   border-width: 0px 3px 3px 0px;
   transform: rotate(45deg);
+  transition: all 0.4s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+.pomodoro-timer .task-list .task .completed-checkbox.completed {
+  background: #c02243;
+}
+.pomodoro-timer .task-list .task .completed-checkbox.completed::after {
+  border-color: rgb(255, 255, 255);
 }
 
 .pomodoro-timer .task-list input {

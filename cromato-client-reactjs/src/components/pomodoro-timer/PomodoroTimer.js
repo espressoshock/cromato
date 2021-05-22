@@ -89,7 +89,7 @@ class PomodoroTimer extends Component {
     //=TODO, this can be simplified
     switch (this.state.cState) {
       case 1:
-        this.setState({ cState: 0 });
+        if (!this.props.aTask) this.setState({ cState: 0 });
         break;
       case 2:
         this.setState({ cState: 1 });
@@ -273,6 +273,7 @@ class PomodoroTimer extends Component {
   };
 
   renderTLTask = (task, i) => {
+    console.log('passed', task.completed);
     return (
       <div
         className={`task ${this.props.aTask?.id === task.id ? 'active' : ''} `}
@@ -289,7 +290,14 @@ class PomodoroTimer extends Component {
       >
         <input type="hidden" value={task.id} className="tlID" />
         <div className="left">
-          <div className="completed-checkbox"></div>
+          <div
+            className={`completed-checkbox ${
+              task.completed ? 'completed' : ''
+            }`}
+            onClick={(e) =>
+              this.props.onTLTaskCompleteClicked(task.id, task.completed)
+            }
+          ></div>
           <input
             type="text"
             className="taskNameInput"
@@ -554,9 +562,17 @@ class PomodoroTimer extends Component {
           <div className="task-list-wrapper-dep">
             <div className="interactive-controls add-task">
               <div className="lx-group">
-                <div className="checkbox">
-                  <div className="icon"></div>
-                </div>
+                <div
+                  className={`checkbox ${
+                    this.props.aTask?.completed ? 'completed' : ''
+                  }`}
+                  onClick={(e) =>
+                    this.props.onTLTaskCompleteClicked(
+                      this.props.aTask?.id,
+                      this.props.aTask?.completed
+                    )
+                  }
+                ></div>
                 <input
                   type="text"
                   className="task-name"

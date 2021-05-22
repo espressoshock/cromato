@@ -236,6 +236,19 @@ class TimerPage extends Component {
       console.log('document updated');
     })();
   };
+  onTLTaskCompleteClicked = (id, completed) => {
+    console.log('com', id, completed);
+    (async () => {
+      const docRef = await updateDoc(
+        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`),
+        {
+          completed: !completed,
+        }
+      );
+
+      console.log('document updated');
+    })();
+  };
   render() {
     return (
       <div className="timer-page">
@@ -262,6 +275,9 @@ class TimerPage extends Component {
             onTLTaskClicked={(e) => this.onTLTaskClicked(e)}
             onAddTask={(e) => this.onAddTask(e)}
             onTLTaskDelete={(e) => this.onTLTaskDelete(e)}
+            onTLTaskCompleteClicked={(id, completed) =>
+              this.onTLTaskCompleteClicked(id, completed)
+            }
           />
         </div>
       </div>
