@@ -130,6 +130,15 @@ class PomodoroTimer extends Component {
     this.setState({ pomodoroEstimated: e.target.value });
   };
 
+  tlTaskClicked = (id, name, estimated, elapsed) => {
+    this.props.onTLTaskClicked({
+      id: id,
+      name: name,
+      pomodoroEstimated: estimated,
+      pomodoroElapsed: elapsed,
+    });
+  };
+
   ///////////////////////////////////
   ////////////////  !INTERNALS
   ///////////////////////////////////
@@ -261,6 +270,15 @@ class PomodoroTimer extends Component {
       <div
         className={`task ${this.props.aTask?.id === task.id ? 'active' : ''} `}
         key={i}
+        onClick={(e) =>
+          this.tlTaskClicked(
+            task.id,
+            task.name,
+            task.pomodoroEstimated,
+            task.pomodoroElapsed
+          )
+        }
+        id={task.id}
       >
         <input type="hidden" value={task.id} className="tlID" />
         <div className="left">

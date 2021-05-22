@@ -203,6 +203,10 @@ class TimerPage extends Component {
       console.log('document updated');
     })();
   };
+  onTLTaskClicked = (task) => {
+    console.log('clicked', task);
+    this.setState({ cTask: task });
+  };
   render() {
     return (
       <div className="timer-page">
@@ -226,6 +230,7 @@ class TimerPage extends Component {
             onTaskSubmit={(e) => this.onTaskSubmit(e)}
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}
+            onTLTaskClicked={(e) => this.onTLTaskClicked(e)}
           />
         </div>
       </div>
