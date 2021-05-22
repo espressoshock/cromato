@@ -258,7 +258,10 @@ class PomodoroTimer extends Component {
   renderTLTask = (task, i) => {
     console.log('passed task', task);
     return (
-      <div className="task active" key={i}>
+      <div
+        className={`task ${this.props.aTask?.id === task.id ? 'active' : ''} `}
+        key={i}
+      >
         <input type="hidden" value={task.id} className="tlID" />
         <div className="left">
           <div className="completed-checkbox"></div>
