@@ -3,6 +3,12 @@ import React from 'react';
 import './PomodoroTimer.css';
 
 import CountUp from 'react-countup';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 class PomodoroTimer extends Component {
   state = {
@@ -21,6 +27,8 @@ class PomodoroTimer extends Component {
     seconds: 0, //timerSec
     pomodoroEstimated: 3,
     pomodoroElapsed: 0,
+    modalVisibility: false,
+    pomodoroDuration: 30,
   };
   constructor(props) {
     super(props);
@@ -29,6 +37,9 @@ class PomodoroTimer extends Component {
   }
   openTaskList = (e) => {
     this.setState({ isTaskListOpen: !this.state.isTaskListOpen });
+  };
+  closeModal = (e) => {
+    this.setState({ modalVisibility: false });
   };
   ///////////////////////////////////
   ////////////////  COMPONENT-update
@@ -664,6 +675,26 @@ class PomodoroTimer extends Component {
             </div>
           </div>
         </div>
+        <Dialog
+          open={this.state.modalVisibility}
+          onClose={this.closeModal}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Time to take a break!'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              The time ran out, consider taking a break!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeModal} color="primary">
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
