@@ -96,8 +96,7 @@
 
 .podoro-timer .svg-wrapper .top-sect,
 .pomodoro-timer .svg-wrapper .bottom-sect,
-.pomodoro-timer .svg-wrapper .peduncle-sect,
-.pomodoro-timer .inner-panel {
+.pomodoro-timer .svg-wrapper .peduncle-sect {
   transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
 }
 
@@ -159,7 +158,7 @@
   fill: #c02243;
 }
 .pomodoro-timer.idle .svg-wrapper .inner-panel {
-  height: 85px;
+  height: 90px;
   top: 154px;
 }
 .pomodoro-timer.idle .interactive-controls .task-completion {
@@ -379,6 +378,20 @@
   border-radius: 50%;
   margin-left: 1em;
   display: inline-block;
+  cursor: pointer;
+}
+.pomodoro-timer .interactive-controls .checkbox::after {
+  content: '';
+  display: block;
+  margin-left: 13px;
+  margin-top: 8px;
+  width: 7px;
+  height: 13px;
+  border-style: solid;
+  border-color: #9b1531;
+  border-image: initial;
+  border-width: 0px 3px 3px 0px;
+  transform: rotate(45deg);
 }
 .pomodoro-timer .interactive-controls .task-name,
 .pomodoro-timer .interactive-controls .a-pomodoroField {
@@ -654,6 +667,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.pomodoro-timer .task-list .task.active {
+  border-color: #c02243;
 }
 .pomodoro-timer .task-list .task .pomodoroStat {
   position: relative;

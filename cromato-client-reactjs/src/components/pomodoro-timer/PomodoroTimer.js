@@ -501,7 +501,7 @@ class PomodoroTimer extends Component {
               <div className="divider"></div>
             </div>
             <div className="list">
-              <div className="task">
+              <div className="task active">
                 <div className="left">
                   <div className="completed-checkbox"></div>
                   <input
