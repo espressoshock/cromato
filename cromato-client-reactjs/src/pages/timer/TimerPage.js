@@ -61,6 +61,7 @@ class TimerPage extends Component {
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
+          this.setState({ cTask: tTasks[0] });
         });
 
         /*   (async () => {
@@ -221,6 +222,7 @@ class TimerPage extends Component {
         <div className="main-wrapper">
           <PomodoroTimer
             tasks={this.state.tasks}
+            aTask={this.state.cTask}
             onTaskSubmit={(e) => this.onTaskSubmit(e)}
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}

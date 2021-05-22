@@ -30,10 +30,20 @@ class PomodoroTimer extends Component {
     this.setState({ isTaskListOpen: !this.state.isTaskListOpen });
   };
   ///////////////////////////////////
+  ////////////////  COMPONENT-update
+  ///////////////////////////////////
+  componentDidUpdate(prevProps) {
+    if (prevProps.aTask !== this.props.aTask) {
+      if (this.props.aTask) this.setState({ cState: 1 });
+      else this.setState({ cState: 0 });
+    }
+  }
+  ///////////////////////////////////
   ////////////////  COMPONENTMOUNT
   ///////////////////////////////////
   componentDidMount() {
-    this.setState({ cState: 0 });
+    if (this.props.aTask) this.setState({ cState: 1 });
+    else this.setState({ cState: 0 });
     //pause pomodoro textual counter
     this.pomodoroTCounter.current.pauseResume();
 
@@ -101,10 +111,11 @@ class PomodoroTimer extends Component {
   };
   handleTaskNameUpdate = (e) => {
     //submit
-    this.props.onTaskNameChangeOrSubmit({
-      name: this.state.cTaskName,
-      pomodoroEstimated: this.state.pomodoroEstimated,
-    });
+    if (e.target.value.length > 0)
+      this.props.onTaskNameChangeOrSubmit({
+        name: this.state.cTaskName,
+        pomodoroEstimated: this.state.pomodoroEstimated,
+      });
   };
 
   ///////////////////////////////////
@@ -517,7 +528,9 @@ class PomodoroTimer extends Component {
                 <input
                   type="text"
                   className="task-name"
-                  placeholder={'Type to add a task...'}
+                  placeholder={
+                    this.props.aTask?.name || 'Type to add a task...'
+                  }
                   value={this.state.cTaskName}
                   onChange={(e) => this.handleTaskNameChange(e)}
                   onBlur={(e) => this.handleTaskNameUpdate(e)}
@@ -525,13 +538,15 @@ class PomodoroTimer extends Component {
                 />
               </div>
               <div className="task-completion">
-                <div className="c-pomodoro">0</div>
+                <div className="c-pomodoro">
+                  {this.props.aTask?.pomodoroElapsed}
+                </div>
                 <div className="separator">/</div>
                 <div className="a-pomodoro">
                   <input
                     type="text"
                     className="a-pomodoroField"
-                    placeholder={'3'}
+                    placeholder={this.props.aTask?.pomodoroEstimated || '3'}
                     value={this.state.pomodoroEstimated}
                     onChange={(e) => this.handleTotalPomodorosChange(e)}
                     onBlur={(e) => this.handleTotalPomodorosUpdate(e)}
