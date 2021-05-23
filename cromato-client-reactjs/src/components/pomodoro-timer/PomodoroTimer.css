@@ -506,10 +506,10 @@
   .interactive-timerbar
   .i-timerbar-w.working {
   animation-name: timerbar-working;
-  animation-duration: 300s;
+  animation-duration: 11s; /* RESET ME */
   animation-delay: 0s;
   animation-timing-function: linear;
-  animation-iteration-count: 1;
+  animation-iteration-count: infinite;
 }
 .pomodoro-timer .paused {
   animation-play-state: paused;
@@ -608,6 +608,9 @@
 }
 @keyframes timerbar-working {
   0% {
+    transform: translateX(-880px);
+  }
+  10% {
     transform: translateX(-880px);
   }
   100% {

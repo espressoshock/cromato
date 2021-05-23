@@ -62,7 +62,7 @@ class TimerPage extends Component {
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
-          if (this.state.tTask === undefined)
+          if (this.state.cTask === undefined)
             this.setState({ cTask: tTasks[0] });
         });
 
@@ -180,7 +180,6 @@ class TimerPage extends Component {
       })();
     } else {
       //upating
-
       (async () => {
         const docRef = await updateDoc(
           doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
@@ -190,6 +189,9 @@ class TimerPage extends Component {
         );
 
         console.log('document updated');
+        let ref = { ...this.state.cTask };
+        ref.name = task.name;
+        this.setState({ ref });
       })();
     }
   };
@@ -237,12 +239,23 @@ class TimerPage extends Component {
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
-    console.log('com', id, completed);
     (async () => {
       const docRef = await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${id}`),
         {
           completed: !completed,
+        }
+      );
+
+      console.log('document updated');
+    })();
+  };
+  onPomodoroElapsed = (e) => {
+    (async () => {
+      const docRef = await updateDoc(
+        doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
+        {
+          pomodoroElapsed: this.state.cTask.pomodoroElapsed + 1,
         }
       );
 
@@ -278,6 +291,7 @@ class TimerPage extends Component {
             onTLTaskCompleteClicked={(id, completed) =>
               this.onTLTaskCompleteClicked(id, completed)
             }
+            onPomodoroElapsed={(e) => this.onPomodoroElapsed(e)}
           />
         </div>
       </div>

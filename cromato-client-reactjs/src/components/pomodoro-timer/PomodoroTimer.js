@@ -15,13 +15,15 @@ class PomodoroTimer extends Component {
     states: ['idle', 'ready', 'active', 'working', 'task-expanded', 'break'],
 
     timerStart: 0.0,
-    timerEnd: 25.0,
+    //timerEnd: 25.0, -------> reset me
+    timerEnd: 0.1, //-------> delete, reset above
     timerDuration: 1.4,
     timerEasing: true,
     cTaskName: '',
     cState: undefined,
     counterCharged: false,
     working: false,
+    paused: false,
     timerIntervalRef: undefined,
     minutes: 0, //timerMin
     seconds: 0, //timerSec
@@ -34,6 +36,7 @@ class PomodoroTimer extends Component {
     super(props);
     this.taskNameField = React.createRef();
     this.pomodoroTCounter = React.createRef();
+    this.timerScale = React.createRef();
   }
   openTaskList = (e) => {
     this.setState({ isTaskListOpen: !this.state.isTaskListOpen });
@@ -54,6 +57,10 @@ class PomodoroTimer extends Component {
           pomodoroEstimated: this.props.aTask.pomodoroEstimated,
           pomodoroElapsed: this.props.aTask.pomodoroElapsed,
         });
+
+        this.pomodoroTCounter.current.containerRef.current.textContent =
+          '00:10';
+        this.setState({ counterCharged: true });
       } else this.setState({ cState: 0 });
     }
   }
@@ -61,8 +68,10 @@ class PomodoroTimer extends Component {
   ////////////////  COMPONENTMOUNT
   ///////////////////////////////////
   componentDidMount() {
-    if (this.props.aTask) this.setState({ cState: 1 });
-    else this.setState({ cState: 0 });
+    if (this.props.aTask) {
+      this.setState({ cState: 1 });
+      this.setState({ counterCharged: true });
+    } else this.setState({ cState: 0 });
     //pause pomodoro textual counter
     this.pomodoroTCounter.current.pauseResume();
 
@@ -90,10 +99,10 @@ class PomodoroTimer extends Component {
       this.setState({ cState: this.state.cState + 1 });
 
     //focus task field
-    this.taskNameField.current.focus();
+    //this.taskNameField.current.focus();
 
     if (this.props.aTask?.name && this.state.cState >= 2)
-      this.pomodoroTCounter.current.update(25);
+      this.pomodoroTCounter.current.update(0.1); //---------->reset to 25
   };
   ///////////////////////////////////
   ////////////////  ON-LEAVE-INTERACTION
@@ -128,7 +137,7 @@ class PomodoroTimer extends Component {
     if (e.target.value.length > 0 && this.state.cState <= 2) {
       this.setState({ cState: 2 });
       setTimeout(() => {
-        this.pomodoroTCounter.current.update(25);
+        this.pomodoroTCounter.current.update(this.state.timerEnd);
       }, 100);
     }
   };
@@ -153,12 +162,23 @@ class PomodoroTimer extends Component {
     this.setState({ pomodoroEstimated: e.target.value });
   };
 
-  tlTaskClicked = (id, name, estimated, elapsed) => {
+  tlTaskClicked = (
+    id,
+    name,
+    estimated,
+    elapsed,
+    completed,
+    createdAt,
+    modifiedAt
+  ) => {
     this.props.onTLTaskClicked({
       id: id,
       name: name,
       pomodoroEstimated: estimated,
       pomodoroElapsed: elapsed,
+      completed: completed,
+      createdAt: createdAt,
+      modifiedAt: modifiedAt,
     });
   };
 
@@ -183,9 +203,11 @@ class PomodoroTimer extends Component {
       this.setState({ counterCharged: false });
       this.setState({ cState: 3 });
       this.setState({ working: true });
+      //this.setState({ paused: false });
 
       this.startTimer(
-        60 * 25,
+        //60 * 25, //-----------------------> RESET ME
+        10,
         this.pomodoroTCounter.current.containerRef.current
       );
     } else {
@@ -215,6 +237,11 @@ class PomodoroTimer extends Component {
 
       if (--timer < 0) {
         timer = duration;
+        this.setState({ modalVisibility: true });
+        this.setState({ counterCharged: true });
+        //display.textContent = minutes + ':' + seconds;
+        this.stopTimer();
+        this.props.onPomodoroElapsed();
       }
     }, 1000);
     this.setState({ timerIntervalRef: si });
@@ -290,7 +317,6 @@ class PomodoroTimer extends Component {
   };
 
   renderTLTask = (task, i) => {
-    console.log('passed', task.completed);
     return (
       <div
         className={`task ${this.props.aTask?.id === task.id ? 'active' : ''} `}
@@ -300,7 +326,10 @@ class PomodoroTimer extends Component {
             task.id,
             task.name,
             task.pomodoroEstimated,
-            task.pomodoroElapsed
+            task.pomodoroElapsed,
+            task.completed,
+            task.createdAt,
+            task.modifiedAt
           )
         }
         id={task.id}
@@ -319,6 +348,8 @@ class PomodoroTimer extends Component {
             type="text"
             className="taskNameInput"
             placeholder={task.name}
+            onBlur={(e) => this.handleTaskNameUpdate(e)}
+            readonly="readonly"
           />
         </div>
         <div className="right">
@@ -329,6 +360,7 @@ class PomodoroTimer extends Component {
               type="text"
               className="pomodoroEstInput"
               placeholder={task.pomodoroEstimated}
+              readonly="readonly"
             />
           </div>
           <div
@@ -376,7 +408,7 @@ class PomodoroTimer extends Component {
               this.state.counterCharged ? 'charged' : ''
             }`}
             start={this.state.timerStart || 0.0}
-            end={this.state.timerEnd || 25.0}
+            end={this.state.timerEnd || this.state.timerEnd}
             duration={this.state.timerDuration}
             decimals={2}
             decimal=":"
@@ -390,6 +422,8 @@ class PomodoroTimer extends Component {
                 ? '0' + (n + '').replace('.', ':')
                 : n === 25
                 ? '25:00'
+                  ? n === 0.1
+                  : '00:10'
                 : (n + '').replace('.', ':');
             }}
             onEnd={() => this.onCounterCharged()}
@@ -538,6 +572,7 @@ class PomodoroTimer extends Component {
                   className={`i-timerbar-w ${
                     this.state.cState === 3 ? 'working' : ''
                   } ${!this.state.working ? 'paused' : ''}`}
+                  ref={this.timerScale}
                 >
                   <path
                     fillRule="evenodd"
@@ -599,6 +634,9 @@ class PomodoroTimer extends Component {
                   value={this.state.cTaskName}
                   onChange={(e) => this.handleTaskNameChange(e)}
                   onBlur={(e) => this.handleTaskNameUpdate(e)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') this.handleTaskNameUpdate(e);
+                  }}
                   ref={this.taskNameField}
                 />
               </div>
@@ -615,6 +653,9 @@ class PomodoroTimer extends Component {
                     value={this.state.pomodoroEstimated}
                     onChange={(e) => this.handleTotalPomodorosChange(e)}
                     onBlur={(e) => this.handleTotalPomodorosUpdate(e)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') this.handleTotalPomodorosUpdate(e);
+                    }}
                     ref={this.tPomodorosField}
                   />
                 </div>
