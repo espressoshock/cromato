@@ -8,8 +8,16 @@ import LoginIcon from './images/icons/icon-login.svg';
 import PomodoroTimer from '../../components/pomodoro-timer/PomodoroTimer';
 import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
 
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+} from 'firebase/auth';
 import { getFirestore, updateDoc } from 'firebase/firestore';
 
 import {
@@ -31,28 +39,25 @@ const firebaseConfig = {
   appId: '1:338654786395:web:9f519f34a4e4cb4fd8607e',
   measurementId: 'G-X9SG38QH5W',
 };
-const firebaseApp = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
 const auth = getAuth();
 const db = getFirestore();
-
-let tasksCollectionRef;
 
 class TimerPage extends Component {
   state = {
     auth: false,
     tasks: [],
     cTask: undefined,
+    avatarContextMenuAE: null,
+    taskListBindingHandle: null,
+    timerClearFlag: false, //special clearing flag
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({ auth: true });
         this.setState({ owner: user });
-        tasksCollectionRef = collection(
-          db,
-          `users/${auth.currentUser.uid}/tasks`
-        );
 
         const q = query(collection(db, `users/${auth.currentUser.uid}/tasks`));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -65,35 +70,20 @@ class TimerPage extends Component {
           if (this.state.cTask === undefined)
             this.setState({ cTask: tTasks[0] });
         });
-
-        /*   (async () => {
-          const docRef = await addDoc(
-            collection(db, `users/${auth.currentUser.uid}/tasks`),
-            {
-              name: 'test',
-              active: false,
-              completed: false,
-              pomodoroElapsed: 1,
-              pomodoroEstimated: 3,
-            }
-          );
-          console.log('Document written with ID: ', docRef.id);
-        })(); */
-
-        /*  this.submitTask({
-          name: 'test',
-          active: false,
-          completed: false,
-          pomodoroElapsed: 1,
-          pomodoroEstimated: 3,
-        }); */
+        this.setState({ taskListBindingHandle: unsubscribe });
       } else {
         this.setState({ auth: false });
       }
     });
   }
+  openAvatarContextMenu = (e) => {
+    console.log('open');
+    this.setState({ avatarContextMenuAE: e.currentTarget });
+  };
+  closeAvatarContextMenu = () => {
+    this.setState({ avatarContextMenuAE: null });
+  };
   login = (e) => {
-    console.log('login');
     signInWithPopup(auth, provider)
       .then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -104,9 +94,22 @@ class TimerPage extends Component {
         console.log(error);
       });
   };
+  signOut = (e) => {
+    signOut(auth).then(() => {
+      this.setState({ tasks: [] });
+      this.setState({ cTask: undefined });
+    });
+  };
   renderLogin = () => {
     if (this.state.auth) {
-      return <ProfileThumb thumbURL={auth.currentUser.photoURL} />;
+      return (
+        <ProfileThumb
+          thumbURL={auth.currentUser.photoURL}
+          onAvatarClick={(e) => {
+            this.openAvatarContextMenu(e);
+          }}
+        />
+      );
     } else
       return (
         <ActionButton
@@ -150,7 +153,7 @@ class TimerPage extends Component {
   };
   onCurrentTaskNameUpdate = (task) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           name: task.name,
@@ -181,7 +184,7 @@ class TimerPage extends Component {
     } else {
       //upating
       (async () => {
-        const docRef = await updateDoc(
+        await updateDoc(
           doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
           {
             name: task.name,
@@ -197,7 +200,7 @@ class TimerPage extends Component {
   };
   onEstPomodorosUpdate = (update) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           pomodoroEstimated: update.pomodoroEstimated,
@@ -231,28 +234,31 @@ class TimerPage extends Component {
   onTLTaskDelete = (id) => {
     console.log('id', id);
     (async () => {
-      const docRef = await deleteDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`)
-      );
+      await deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
 
-      console.log('document updated');
+      if (this.state.cTask.id === id) {
+        this.setState({ cTask: undefined });
+        this.setState({ timerClearFlag: true }, () => {
+          //clearing flag set/un-set
+          this.setState({ timerClearFlag: false });
+        });
+      }
+
+      console.log('document deleted');
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
     (async () => {
-      const docRef = await updateDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`),
-        {
-          completed: !completed,
-        }
-      );
+      await updateDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), {
+        completed: !completed,
+      });
 
       console.log('document updated');
     })();
   };
   onPomodoroElapsed = (e) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           pomodoroElapsed: this.state.cTask.pomodoroElapsed + 1,
@@ -271,9 +277,28 @@ class TimerPage extends Component {
               <div className="logo">Cromato</div>
             </div>
             <div className="right">
-              <ActionButton text="Report" icon={ReportIcon} size="m" />
-              <ActionButton text="Settings" icon={SettingsIcon} size="m" />
+              <ActionButton
+                text="Report"
+                icon={ReportIcon}
+                size="m"
+                onButtonClicked={(e) => null}
+              />
+              <ActionButton
+                text="Settings"
+                icon={SettingsIcon}
+                size="m"
+                onButtonClicked={(e) => this.openAvatarContextMenu(e)}
+              />
               {this.renderLogin()}
+              <Menu
+                id="simple-menu"
+                anchorEl={this.state.avatarContextMenuAE}
+                keepMounted
+                open={Boolean(this.state.avatarContextMenuAE)}
+                onClose={(e) => this.closeAvatarContextMenu(e)}
+              >
+                <MenuItem onClick={(e) => this.signOut()}>Sign-out</MenuItem>
+              </Menu>
             </div>
           </div>
           <div className="divider"></div>
@@ -282,6 +307,7 @@ class TimerPage extends Component {
           <PomodoroTimer
             tasks={this.state.tasks}
             aTask={this.state.cTask}
+            clearFlag={this.state.timerClearFlag}
             onTaskSubmit={(e) => this.onTaskSubmit(e)}
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}

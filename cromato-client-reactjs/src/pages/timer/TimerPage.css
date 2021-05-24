@@ -47,6 +47,9 @@
   margin: auto;
 }
 .timer-page .main-wrapper {
-  height: calc(100% - 70px);
-  overflow-x: hidden;
+  height: calc(100% - 80px);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

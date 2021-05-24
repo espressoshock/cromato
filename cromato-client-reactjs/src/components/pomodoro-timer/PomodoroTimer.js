@@ -50,18 +50,23 @@ class PomodoroTimer extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.aTask !== this.props.aTask) {
       console.log('atask', this.props.aTask);
-      if (this.props.aTask) {
-        this.setState({ cState: 1 });
-        this.setState({
-          cTaskName: this.props.aTask.name,
-          pomodoroEstimated: this.props.aTask.pomodoroEstimated,
-          pomodoroElapsed: this.props.aTask.pomodoroElapsed,
-        });
+      if (this.props.aTask === undefined) {
+        this.setState({ cTaskName: '' });
+        this.setState({ cState: 0 });
+      } else {
+        if (this.props.aTask) {
+          this.setState({ cState: 1 });
+          this.setState({
+            cTaskName: this.props.aTask.name,
+            pomodoroEstimated: this.props.aTask.pomodoroEstimated,
+            pomodoroElapsed: this.props.aTask.pomodoroElapsed,
+          });
 
-        this.pomodoroTCounter.current.containerRef.current.textContent =
-          '00:10';
-        this.setState({ counterCharged: true });
-      } else this.setState({ cState: 0 });
+          this.pomodoroTCounter.current.containerRef.current.textContent =
+            '00:10';
+          this.setState({ counterCharged: true });
+        } else this.setState({ cState: 0 });
+      }
     }
   }
   ///////////////////////////////////
@@ -349,7 +354,7 @@ class PomodoroTimer extends Component {
             className="taskNameInput"
             placeholder={task.name}
             onBlur={(e) => this.handleTaskNameUpdate(e)}
-            readonly="readonly"
+            readOnly="readonly"
           />
         </div>
         <div className="right">
@@ -360,12 +365,18 @@ class PomodoroTimer extends Component {
               type="text"
               className="pomodoroEstInput"
               placeholder={task.pomodoroEstimated}
-              readonly="readonly"
+              readOnly="readonly"
             />
           </div>
           <div
             className="context-menu"
-            onClick={(e) => this.props.onTLTaskDelete(task.id)}
+            onClick={(e) => {
+              this.props.onTLTaskDelete(task.id);
+              if (this.props.tasks?.length === 1)
+                setTimeout(() => {
+                  this.openTaskList(e);
+                }, 800);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -374,10 +385,10 @@ class PomodoroTimer extends Component {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="feather feather-trash-2"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-trash-2"
             >
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -616,7 +627,11 @@ class PomodoroTimer extends Component {
               <div className="lx-group">
                 <div
                   className={`checkbox ${
-                    this.props.aTask?.completed ? 'completed' : ''
+                    this.props.aTask !== undefined
+                      ? this.props.aTask?.completed
+                        ? 'completed'
+                        : ''
+                      : ''
                   }`}
                   onClick={(e) =>
                     this.props.onTLTaskCompleteClicked(
@@ -629,7 +644,9 @@ class PomodoroTimer extends Component {
                   type="text"
                   className="task-name"
                   placeholder={
-                    this.props.aTask?.name || 'Type to add a task...'
+                    this.props.aTask !== undefined
+                      ? this.props.aTask?.name
+                      : 'Type to add a task...'
                   }
                   value={this.state.cTaskName}
                   onChange={(e) => this.handleTaskNameChange(e)}
@@ -642,14 +659,20 @@ class PomodoroTimer extends Component {
               </div>
               <div className="task-completion">
                 <div className="c-pomodoro">
-                  {this.props.aTask?.pomodoroElapsed}
+                  {this.props.aTask !== undefined
+                    ? this.props.aTask?.pomodoroElapsed
+                    : '0'}
                 </div>
                 <div className="separator">/</div>
                 <div className="a-pomodoro">
                   <input
                     type="text"
                     className="a-pomodoroField"
-                    placeholder={this.props.aTask?.pomodoroEstimated || '3'}
+                    placeholder={
+                      this.props.aTask !== undefined
+                        ? this.props.aTask?.pomodoroEstimated
+                        : '3'
+                    }
                     value={this.state.pomodoroEstimated}
                     onChange={(e) => this.handleTotalPomodorosChange(e)}
                     onBlur={(e) => this.handleTotalPomodorosUpdate(e)}
@@ -679,7 +702,7 @@ class PomodoroTimer extends Component {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              class="feather feather-chevron-right"
+              className="feather feather-chevron-right"
             >
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
@@ -692,7 +715,15 @@ class PomodoroTimer extends Component {
             <div className="list">
               {this.props.tasks.map((item, i) => this.renderTLTask(item, i))}
               {/* SPECIAL TASK - ADD  */}
-              <div className="task add-task" onClick={this.props.onAddTask}>
+              <div
+                className="task add-task"
+                onClick={(e) => {
+                  setTimeout(() => {
+                    this.openTaskList(e);
+                  }, 800);
+                  this.props.onAddTask(e);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -703,8 +734,7 @@ class PomodoroTimer extends Component {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  class="feather feather-plus-square"
-                  className="icon"
+                  className="icon feather feather-plus-square"
                 >
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="12" y1="8" x2="12" y2="16"></line>
