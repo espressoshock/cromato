@@ -39,12 +39,10 @@ const firebaseConfig = {
   appId: '1:338654786395:web:9f519f34a4e4cb4fd8607e',
   measurementId: 'G-X9SG38QH5W',
 };
-const firebaseApp = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
 const auth = getAuth();
 const db = getFirestore();
-
-let tasksCollectionRef;
 
 class TimerPage extends Component {
   state = {
@@ -52,16 +50,13 @@ class TimerPage extends Component {
     tasks: [],
     cTask: undefined,
     avatarContextMenuAE: null,
+    taskListBindingHandle: null,
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({ auth: true });
         this.setState({ owner: user });
-        tasksCollectionRef = collection(
-          db,
-          `users/${auth.currentUser.uid}/tasks`
-        );
 
         const q = query(collection(db, `users/${auth.currentUser.uid}/tasks`));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -74,28 +69,7 @@ class TimerPage extends Component {
           if (this.state.cTask === undefined)
             this.setState({ cTask: tTasks[0] });
         });
-
-        /*   (async () => {
-          const docRef = await addDoc(
-            collection(db, `users/${auth.currentUser.uid}/tasks`),
-            {
-              name: 'test',
-              active: false,
-              completed: false,
-              pomodoroElapsed: 1,
-              pomodoroEstimated: 3,
-            }
-          );
-          console.log('Document written with ID: ', docRef.id);
-        })(); */
-
-        /*  this.submitTask({
-          name: 'test',
-          active: false,
-          completed: false,
-          pomodoroElapsed: 1,
-          pomodoroEstimated: 3,
-        }); */
+        this.setState({ taskListBindingHandle: unsubscribe });
       } else {
         this.setState({ auth: false });
       }
@@ -178,7 +152,7 @@ class TimerPage extends Component {
   };
   onCurrentTaskNameUpdate = (task) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           name: task.name,
@@ -209,7 +183,7 @@ class TimerPage extends Component {
     } else {
       //upating
       (async () => {
-        const docRef = await updateDoc(
+        await updateDoc(
           doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
           {
             name: task.name,
@@ -225,7 +199,7 @@ class TimerPage extends Component {
   };
   onEstPomodorosUpdate = (update) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           pomodoroEstimated: update.pomodoroEstimated,
@@ -259,28 +233,23 @@ class TimerPage extends Component {
   onTLTaskDelete = (id) => {
     console.log('id', id);
     (async () => {
-      const docRef = await deleteDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`)
-      );
+      await deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
 
       console.log('document updated');
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
     (async () => {
-      const docRef = await updateDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${id}`),
-        {
-          completed: !completed,
-        }
-      );
+      await updateDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), {
+        completed: !completed,
+      });
 
       console.log('document updated');
     })();
   };
   onPomodoroElapsed = (e) => {
     (async () => {
-      const docRef = await updateDoc(
+      await updateDoc(
         doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
         {
           pomodoroElapsed: this.state.cTask.pomodoroElapsed + 1,
