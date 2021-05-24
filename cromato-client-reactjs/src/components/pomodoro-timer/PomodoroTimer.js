@@ -692,7 +692,15 @@ class PomodoroTimer extends Component {
             <div className="list">
               {this.props.tasks.map((item, i) => this.renderTLTask(item, i))}
               {/* SPECIAL TASK - ADD  */}
-              <div className="task add-task" onClick={this.props.onAddTask}>
+              <div
+                className="task add-task"
+                onClick={(e) => {
+                  setTimeout(() => {
+                    this.openTaskList(e);
+                  }, 800);
+                  this.props.onAddTask(e);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
