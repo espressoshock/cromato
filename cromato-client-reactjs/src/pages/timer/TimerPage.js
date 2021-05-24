@@ -8,8 +8,16 @@ import LoginIcon from './images/icons/icon-login.svg';
 import PomodoroTimer from '../../components/pomodoro-timer/PomodoroTimer';
 import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
 
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+} from 'firebase/auth';
 import { getFirestore, updateDoc } from 'firebase/firestore';
 
 import {
@@ -43,6 +51,7 @@ class TimerPage extends Component {
     auth: false,
     tasks: [],
     cTask: undefined,
+    avatarContextMenuAE: null,
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -92,8 +101,14 @@ class TimerPage extends Component {
       }
     });
   }
+  openAvatarContextMenu = (e) => {
+    console.log('open');
+    this.setState({ avatarContextMenuAE: e.currentTarget });
+  };
+  closeAvatarContextMenu = () => {
+    this.setState({ avatarContextMenuAE: null });
+  };
   login = (e) => {
-    console.log('login');
     signInWithPopup(auth, provider)
       .then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -104,9 +119,22 @@ class TimerPage extends Component {
         console.log(error);
       });
   };
+  signOut = (e) => {
+    signOut(auth).then(() => {
+      this.setState({ tasks: [] });
+      this.setState({ cTask: undefined });
+    });
+  };
   renderLogin = () => {
     if (this.state.auth) {
-      return <ProfileThumb thumbURL={auth.currentUser.photoURL} />;
+      return (
+        <ProfileThumb
+          thumbURL={auth.currentUser.photoURL}
+          onAvatarClick={(e) => {
+            this.openAvatarContextMenu(e);
+          }}
+        />
+      );
     } else
       return (
         <ActionButton
@@ -271,9 +299,28 @@ class TimerPage extends Component {
               <div className="logo">Cromato</div>
             </div>
             <div className="right">
-              <ActionButton text="Report" icon={ReportIcon} size="m" />
-              <ActionButton text="Settings" icon={SettingsIcon} size="m" />
+              <ActionButton
+                text="Report"
+                icon={ReportIcon}
+                size="m"
+                onButtonClicked={(e) => null}
+              />
+              <ActionButton
+                text="Settings"
+                icon={SettingsIcon}
+                size="m"
+                onButtonClicked={(e) => this.openAvatarContextMenu(e)}
+              />
               {this.renderLogin()}
+              <Menu
+                id="simple-menu"
+                anchorEl={this.state.avatarContextMenuAE}
+                keepMounted
+                open={Boolean(this.state.avatarContextMenuAE)}
+                onClose={(e) => this.closeAvatarContextMenu(e)}
+              >
+                <MenuItem onClick={(e) => this.signOut()}>Sign-out</MenuItem>
+              </Menu>
             </div>
           </div>
           <div className="divider"></div>
