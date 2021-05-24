@@ -51,6 +51,7 @@ class TimerPage extends Component {
     cTask: undefined,
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
+    timerClearFlag: false, //special clearing flag
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -235,7 +236,15 @@ class TimerPage extends Component {
     (async () => {
       await deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
 
-      console.log('document updated');
+      if (this.state.cTask.id === id) {
+        this.setState({ cTask: undefined });
+        this.setState({ timerClearFlag: true }, () => {
+          //clearing flag set/un-set
+          this.setState({ timerClearFlag: false });
+        });
+      }
+
+      console.log('document deleted');
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
@@ -298,6 +307,7 @@ class TimerPage extends Component {
           <PomodoroTimer
             tasks={this.state.tasks}
             aTask={this.state.cTask}
+            clearFlag={this.state.timerClearFlag}
             onTaskSubmit={(e) => this.onTaskSubmit(e)}
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}

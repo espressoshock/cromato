@@ -50,18 +50,23 @@ class PomodoroTimer extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.aTask !== this.props.aTask) {
       console.log('atask', this.props.aTask);
-      if (this.props.aTask) {
-        this.setState({ cState: 1 });
-        this.setState({
-          cTaskName: this.props.aTask.name,
-          pomodoroEstimated: this.props.aTask.pomodoroEstimated,
-          pomodoroElapsed: this.props.aTask.pomodoroElapsed,
-        });
+      if (this.props.aTask === undefined) {
+        this.setState({ cTaskName: '' });
+        this.setState({ cState: 0 });
+      } else {
+        if (this.props.aTask) {
+          this.setState({ cState: 1 });
+          this.setState({
+            cTaskName: this.props.aTask.name,
+            pomodoroEstimated: this.props.aTask.pomodoroEstimated,
+            pomodoroElapsed: this.props.aTask.pomodoroElapsed,
+          });
 
-        this.pomodoroTCounter.current.containerRef.current.textContent =
-          '00:10';
-        this.setState({ counterCharged: true });
-      } else this.setState({ cState: 0 });
+          this.pomodoroTCounter.current.containerRef.current.textContent =
+            '00:10';
+          this.setState({ counterCharged: true });
+        } else this.setState({ cState: 0 });
+      }
     }
   }
   ///////////////////////////////////
@@ -616,7 +621,11 @@ class PomodoroTimer extends Component {
               <div className="lx-group">
                 <div
                   className={`checkbox ${
-                    this.props.aTask?.completed ? 'completed' : ''
+                    this.props.aTask !== undefined
+                      ? this.props.aTask?.completed
+                        ? 'completed'
+                        : ''
+                      : ''
                   }`}
                   onClick={(e) =>
                     this.props.onTLTaskCompleteClicked(
@@ -629,7 +638,9 @@ class PomodoroTimer extends Component {
                   type="text"
                   className="task-name"
                   placeholder={
-                    this.props.aTask?.name || 'Type to add a task...'
+                    this.props.aTask !== undefined
+                      ? this.props.aTask?.name
+                      : 'Type to add a task...'
                   }
                   value={this.state.cTaskName}
                   onChange={(e) => this.handleTaskNameChange(e)}
@@ -642,14 +653,20 @@ class PomodoroTimer extends Component {
               </div>
               <div className="task-completion">
                 <div className="c-pomodoro">
-                  {this.props.aTask?.pomodoroElapsed}
+                  {this.props.aTask !== undefined
+                    ? this.props.aTask?.pomodoroElapsed
+                    : '0'}
                 </div>
                 <div className="separator">/</div>
                 <div className="a-pomodoro">
                   <input
                     type="text"
                     className="a-pomodoroField"
-                    placeholder={this.props.aTask?.pomodoroEstimated || '3'}
+                    placeholder={
+                      this.props.aTask !== undefined
+                        ? this.props.aTask?.pomodoroEstimated
+                        : '3'
+                    }
                     value={this.state.pomodoroEstimated}
                     onChange={(e) => this.handleTotalPomodorosChange(e)}
                     onBlur={(e) => this.handleTotalPomodorosUpdate(e)}
