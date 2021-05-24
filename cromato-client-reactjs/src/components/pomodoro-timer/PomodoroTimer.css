@@ -1,0 +1,814 @@
+/* ===============
+   component
+   =============== */
+.pomodoro-timer {
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1.75);
+  width: 600px;
+  margin: auto;
+}
+.pomodoro-timer .svg-wrapper svg {
+  transform: scale(0.5);
+  transform-origin: top left;
+  overflow: visible;
+}
+.pomodoro-timer .svg-wrapper {
+  position: relative;
+  width: 403.5px;
+  height: 370px;
+  margin: auto;
+  margin-top: 5em;
+  z-index: 5;
+}
+.pomodoro-timer .svg-wrapper .inner-panel {
+  background-color: #9b1531;
+  width: 378.5px;
+  height: 36px;
+  position: absolute;
+  left: 12.5px;
+  top: 189px;
+}
+.pomodoro-timer .svg-wrapper .timer-countdown {
+  transform: translate(222px, 499px);
+}
+
+/* ===============
+     pomodoro-text-counter
+     =============== */
+.pomodoro-timer .pomodoro-text-counter {
+  position: absolute;
+  left: 142px;
+  top: 277px;
+  z-index: 1;
+  color: #ffc4b6;
+  font-weight: 900;
+  font-size: 3em;
+  transform: translateY(3px);
+}
+.pomodoro-timer .pomodoro-text-counter.charged {
+  cursor: pointer;
+}
+/* ===============
+     arrow-control
+     =============== */
+.pomodoro-timer .svg-wrapper .controls .shelf-arrow-control {
+  /* transform-origin: 52% 42%; */
+  transform-origin: 49% 41%;
+  transform: rotate(-180deg) translate(0px, 0);
+}
+.pomodoro-timer .svg-wrapper .controls .shelf-arrow-control.skip-enabled {
+  transform: rotate(90deg);
+  fill: #ffc4b6;
+  cursor: pointer;
+}
+.pomodoro-timer .svg-wrapper .controls .shelf-arrow-control.expand-enabled {
+  transform: rotate(0deg);
+  fill: #ffc4b6;
+  cursor: pointer;
+}
+/* ===============
+     input placeholder
+     =============== */
+.pomodoro-timer .interactive-controls .task-name::placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls .task-name:-ms-input-placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls .task-name::-ms-input-placeholder {
+  color: #ffc4b6;
+  opacity: 1;
+}
+
+.pomodoro-timer .interactive-controls .a-pomodoroField::placeholder {
+  color: #bf7e79;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls .a-pomodoroField:-ms-input-placeholder {
+  color: #bf7e79;
+  opacity: 1;
+}
+.pomodoro-timer .interactive-controls .a-pomodoroField::-ms-input-placeholder {
+  color: #bf7e79;
+  opacity: 1;
+}
+
+.podoro-timer .svg-wrapper .top-sect,
+.pomodoro-timer .svg-wrapper .bottom-sect,
+.pomodoro-timer .svg-wrapper .peduncle-sect {
+  transition: transform 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+
+.pomodoro-timer .svg-wrapper .shelf-arrow-control {
+  transition: all 0.5s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+.pomodoro-timer .interactive-controls .lx-group,
+.pomodoro-timer .interactive-controls .task-completion,
+.pomodoro-timer .interactive-controls .checkbox {
+  transition: all 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+
+.pomodoro-timer .svg-wrapper .timer-scale {
+  transition: all 0.2s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transition: transform 1.5s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
+.pomodoro-timer .svg-wrapper #timerbar-clip {
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1);
+}
+.pomodoro-timer.ready .svg-wrapper .timer-countdown {
+  transition: transform 0.6s cubic-bezier(0.75, -0.5, 0, 1.7);
+}
+.pomodoro-timer .pomodoro-text-counter {
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1.2);
+}
+/* ===============
+     pre-frame anim
+     =============== */
+.pomodoro-timer .svg-wrapper .timer-scale {
+  transform: translate(16px, 436px);
+  clip-path: url(#timerbar-clip);
+  opacity: 0;
+}
+.pomodoro-timer .svg-wrapper #timerbar-clip {
+  transform: translateY(-69px);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(0px);
+}
+
+/* ===============
+     IDLE rules
+     =============== */
+.pomodoro-timer.idle .interactive-controls .checkbox,
+.pomodoro-timer.idle .interactive-controls .task-completion,
+.pomodoro-timer.idle .timer-scale {
+  visibility: visible;
+}
+.pomodoro-timer.idle .interactive-controls .lx-group {
+  transform: translateX(50px);
+}
+.pomodoro-timer.idle .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+}
+.pomodoro-timer.idle .svg-wrapper .inner-panel {
+  height: 90px;
+  top: 154px;
+}
+.pomodoro-timer.idle .interactive-controls .task-completion {
+  transform: translateX(100px);
+  opacity: 0;
+}
+.pomodoro-timer.idle .interactive-controls .checkbox {
+  transform: translateX(30px);
+  opacity: 0;
+}
+
+/* ===============
+     READY rules
+     =============== */
+.pomodoro-timer.ready .svg-wrapper .timer-scale {
+  visibility: visible;
+}
+.pomodoro-timer.ready .svg-wrapper .top-sect,
+.pomodoro-timer.ready .svg-wrapper .peduncle-sect,
+.pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.ready .svg-wrapper .bottom-sect {
+  transform: translateY(35px);
+}
+.pomodoro-timer.ready .svg-wrapper .inner-panel {
+  height: 90px;
+  top: 154px;
+}
+.pomodoro-timer.ready .svg-wrapper .shelf-arrow-control {
+  transform: rotate(90deg) !important;
+  fill: #c02243;
+}
+
+.pomodoro-timer.ready .interactive-controls .checkbox,
+.pomodoro-timer.ready .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.ready .pomodoro-text-counter {
+  transform: translateY(12px);
+}
+.pomodoro-timer.ready .svg-wrapper .timer-countdown {
+  transform: translate(222px, 514px);
+}
+
+/* ===============
+     ACTIVE rules
+     =============== */
+
+.pomodoro-timer.active .svg-wrapper .top-sect,
+.pomodoro-timer.active .svg-wrapper .peduncle-sect,
+.pomodoro-timer.active .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.active .svg-wrapper .bottom-sect {
+  transform: translateY(105px);
+}
+.pomodoro-timer.active .svg-wrapper .inner-panel {
+  height: 120px;
+  top: 154px;
+}
+.pomodoro-timer.active .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+  transform: rotate(90deg) !important;
+}
+
+.pomodoro-timer.active .interactive-controls .checkbox,
+.pomodoro-timer.active .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.active .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(-880px);
+}
+.pomodoro-timer.active .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
+}
+.pomodoro-timer.active .pomodoro-text-counter {
+  transform: translateY(47px);
+}
+.pomodoro-timer.active .svg-wrapper .timer-countdown {
+  transform: translate(222px, 584px);
+}
+/* ===============
+     working rules
+     =============== */
+
+.pomodoro-timer.working .svg-wrapper .top-sect,
+.pomodoro-timer.working .svg-wrapper .peduncle-sect,
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.working .svg-wrapper .bottom-sect {
+  transform: translateY(105px);
+}
+.pomodoro-timer.working .svg-wrapper .inner-panel {
+  height: 120px;
+  top: 154px;
+}
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+  transform: rotate(90deg) !important;
+}
+
+.pomodoro-timer.working .interactive-controls .checkbox,
+.pomodoro-timer.working .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.working .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.working .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer.working .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(-880px);
+}
+.pomodoro-timer.working .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
+}
+.pomodoro-timer.working .pomodoro-text-counter {
+  transform: translateY(47px);
+}
+.pomodoro-timer.working .svg-wrapper .timer-countdown {
+  transform: translate(222px, 584px);
+}
+
+/* ===============
+     paused rules
+     =============== */
+
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control.paused {
+  fill: #ffc4b6;
+  transform: rotate(90deg) !important;
+}
+.pomodoro-timer.working .svg-wrapper .shelf-arrow-control.playing {
+  fill: rgb(131, 13, 38);
+  transform: rotate(180deg) !important;
+}
+/* ===============
+     TASK-EXPANDED rules
+     =============== */
+
+.pomodoro-timer.task-expanded .svg-wrapper .top-sect,
+.pomodoro-timer.task-expanded .svg-wrapper .peduncle-sect,
+.pomodoro-timer.task-expanded .svg-wrapper .shelf-arrow-control {
+  transform: translateY(-15px);
+}
+.pomodoro-timer.task-expanded .svg-wrapper .bottom-sect {
+  transform: translateY(405px);
+}
+.pomodoro-timer.task-expanded .svg-wrapper .inner-panel {
+  height: 280px;
+  top: 154px;
+}
+.pomodoro-timer.task-expanded .svg-wrapper .shelf-arrow-control {
+  fill: #c02243;
+}
+
+.pomodoro-timer.task-expanded .interactive-controls .checkbox,
+.pomodoro-timer.task-expanded .interactive-controls .task-completion {
+  transform: translateX(0px);
+  opacity: 1;
+}
+.pomodoro-timer.task-expanded .svg-wrapper .timer-scale {
+  transform: translate(16px, 786px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
+.pomodoro-timer.task-expanded .svg-wrapper .interactive-timerbar {
+  transform: translateY(14px);
+  clip-path: url(#timerbar-clip);
+}
+.pomodoro-timer.task-expanded .svg-wrapper .interactive-timerbar .i-timerbar-w {
+  transform: translateX(-880px);
+}
+.pomodoro-timer.task-expanded .svg-wrapper #timerbar-clip {
+  transform: translateY(-1px);
+}
+.pomodoro-timer.task-expanded .pomodoro-text-counter {
+  transform: translateY(196px);
+}
+.pomodoro-timer.task-expanded .svg-wrapper .timer-countdown {
+  transform: translate(222px, 884px);
+}
+/* ===============
+     interactive-controls
+     =============== */
+.pomodoro-timer .interactive-controls {
+  position: absolute;
+  left: 12px;
+  top: 196px;
+  width: 379px;
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.pomodoro-timer .interactive-controls .checkbox {
+  width: 35px;
+  height: 35px;
+  background-color: #6c081d;
+  border-radius: 50%;
+  margin-left: 1em;
+  display: inline-block;
+  cursor: pointer;
+}
+.pomodoro-timer .interactive-controls .checkbox::after {
+  content: '';
+  display: block;
+  margin-left: 13px;
+  margin-top: 8px;
+  width: 7px;
+  height: 13px;
+  border-style: solid;
+  border-color: #9b1531;
+  border-image: initial;
+  border-width: 0px 3px 3px 0px;
+  transform: rotate(45deg);
+}
+.pomodoro-timer .interactive-controls .checkbox.completed {
+  background-color: #ffff;
+}
+.pomodoro-timer .interactive-controls .checkbox.completed::after {
+  border-color: #9b1531;
+}
+.pomodoro-timer .interactive-controls .task-name,
+.pomodoro-timer .interactive-controls .a-pomodoroField {
+  background: none;
+  color: #ffc4b6;
+  outline: none;
+  border: none;
+  font-weight: 900;
+  margin-left: 1em;
+}
+.pomodoro-timer .interactive-controls .a-pomodoroField {
+  color: #c38171 !important;
+}
+.pomodoro-timer .interactive-controls .a-pomodoroField {
+  margin: 0;
+  font-weight: 700;
+  width: 12px;
+  font-size: 1em;
+}
+.pomodoro-timer .lx-group {
+  display: flex;
+  justify-content: center;
+}
+.pomodoro-timer .interactive-controls .task-name,
+.pomodoro-timer .interactive-controls .checkbox,
+.pomodoro-timer .interactive-controls .task-completion,
+.pomodoro-timer .interactive-controls .task-completion > div {
+  display: inline-block;
+}
+.pomodoro-timer .interactive-controls .task-completion {
+  position: relative;
+  top: 4px;
+  margin-right: 1em;
+  order: 2;
+  background-color: #6c081d;
+  height: fit-content;
+  padding: 5px 15px;
+  border-radius: 6px;
+  color: #ffc4b6;
+  font-weight: 700;
+}
+.pomodoro-timer .interactive-controls .task-completion .c-pomodoro::after,
+.pomodoro-timer .interactive-controls .task-completion .separator::after {
+  content: ' ';
+  white-space: pre;
+}
+/* ===============
+     animations-declarations
+     =============== */
+.pomodoro-timer .svg-wrapper .bottom-sect-anim,
+.pomodoro-timer .svg-wrapper .top-sect-anim,
+.pomodoro-timer .svg-wrapper .peduncle-sect-anim {
+  animation-fill-mode: both !important;
+  position: relative;
+}
+.pomodoro-timer.idle .svg-wrapper .top-sect-anim {
+  animation-name: top-sect-idle;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .svg-wrapper .bottom-sect-anim {
+  animation-name: bottom-sect-idle;
+  animation-duration: 3s;
+  animation-delay: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .svg-wrapper .peduncle-sect {
+  /*  animation-name: bottom-sect-idle; */
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-delay: 0.5s;
+}
+.pomodoro-timer.idle .svg-wrapper .controls-anim {
+  animation-name: shelf-control-idle;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .svg-wrapper .timer-countdown {
+  animation-name: timer-countdown-idle;
+  animation-duration: 3s;
+  animation-delay: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.idle .pomodoro-text-counter {
+  animation-name: pomodoro-text-counter-idle;
+  animation-duration: 3s;
+  animation-delay: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.ready .pomodoro-text-counter.charged {
+  animation-name: pomodoro-text-counter-charged;
+  animation-duration: 2s;
+  animation-delay: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer.working
+  .svg-wrapper
+  .interactive-timerbar
+  .i-timerbar-w.working {
+  animation-name: timerbar-working;
+  animation-duration: 11s; /* RESET ME */
+  animation-delay: 0s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.pomodoro-timer .paused {
+  animation-play-state: paused;
+}
+/* ===============
+     animations-keyframes
+     =============== */
+
+@keyframes top-sect-idle {
+  0% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes bottom-sect-idle {
+  0% {
+    transform: translateY(15px);
+  }
+  50% {
+    transform: translateY(30px);
+  }
+  100% {
+    transform: translateY(15px);
+  }
+}
+@keyframes peduncle-sect-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes shelf-control-idle {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes timer-countdown-idle {
+  0% {
+    transform: translate(222px, 499px);
+  }
+  50% {
+    transform: translate(222px, 514px);
+  }
+  100% {
+    transform: translate(222px, 499px);
+  }
+}
+@keyframes pomodoro-text-counter-idle {
+  0% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(11px);
+  }
+  100% {
+    transform: translateY(3px);
+  }
+}
+@keyframes pomodoro-text-counter-charged {
+  0% {
+    transform: translateY(12px) scale(1);
+  }
+  50% {
+    transform: translateY(12px) scale(1.1);
+  }
+  100% {
+    transform: translateY(12px) scale(1);
+  }
+}
+@keyframes timer-countdown-charged {
+  0% {
+    transform: translate(222px, 514px) scale(1);
+  }
+  50% {
+    transform: translate(222px, 514px) scale(1.2);
+  }
+  100% {
+    transform: translate(222px, 514px) scale(1);
+  }
+}
+@keyframes timerbar-working {
+  0% {
+    transform: translateX(-880px);
+  }
+  10% {
+    transform: translateX(-880px);
+  }
+  100% {
+    transform: translateX(373px);
+  }
+}
+/* ===============
+   shelf-control
+   =============== */
+.pomodoro-timer .task-list-wrapper {
+  width: 500px;
+  margin: auto;
+  margin-top: -400px;
+  height: 500px;
+  position: relative;
+  z-index: 0;
+}
+.pomodoro-timer.tl-open .shelf-control {
+  transform: rotate(180deg) scale(1.5);
+}
+.pomodoro-timer .shelf-control {
+  position: absolute;
+  right: -50px;
+  top: 220px;
+  transform: scale(1.5);
+  stroke: #6c081d;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+.pomodoro-timer .shelf-control.active {
+  stroke: #ffc4b6;
+}
+.pomodoro-timer .shelf-control.active:hover {
+}
+/* ===============
+   task-list
+   =============== */
+.pomodoro-timer.tl-open {
+  transform: translate(-500px, 0);
+}
+.pomodoro-timer .task-list {
+  position: absolute;
+  top: 0;
+  right: -650px;
+  color: #ffc4b6;
+  width: 500px;
+}
+.pomodoro-timer .task-list .list {
+  max-height: 500px;
+  padding-right: 1em;
+  overflow-y: scroll;
+}
+.pomodoro-timer .task-list .divider {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  width: 100%;
+}
+/* ===============
+   task-list / task
+   =============== */
+.pomodoro-timer .task-list .task {
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 10%) 0px 4px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  text-align: left;
+  font-size: 16px;
+  box-sizing: border-box;
+  border-left: 6px solid transparent;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pomodoro-timer .task-list .task.active {
+  border-color: #c02243;
+}
+.pomodoro-timer .task-list .task .pomodoroStat {
+  position: relative;
+  top: -4px;
+}
+.pomodoro-timer .task-list .task .context-menu {
+  border: 1px solid rgb(223, 223, 223);
+  border-radius: 4px;
+  padding: 2px 4px;
+  background-color: white;
+  width: 20px;
+  transition: all 0.4s ease;
+  margin-left: 1em;
+  display: inline-block;
+}
+.pomodoro-timer .task-list .task .context-menu svg {
+  position: relative;
+  right: 2px;
+  top: 1px;
+  transform: scale(0.7);
+}
+.pomodoro-timer .task-list .task .context-menu:hover {
+  background-color: rgb(223, 223, 223);
+}
+.pomodoro-timer .task-list .task .completed-checkbox {
+  width: 34px;
+  height: 34px;
+  background: rgb(223, 223, 223);
+  border-radius: 50%;
+  display: inline-block;
+  order: 0;
+  z-index: 5;
+}
+.pomodoro-timer .task-list .task .completed-checkbox::after {
+  content: '';
+  display: block;
+  margin-left: 13px;
+  margin-top: 8px;
+  width: 5px;
+  height: 11px;
+  border-style: solid;
+  border-color: rgb(255, 255, 255);
+  border-image: initial;
+  border-width: 0px 3px 3px 0px;
+  transform: rotate(45deg);
+  transition: all 0.4s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+.pomodoro-timer .task-list .task .completed-checkbox.completed {
+  background: #c02243;
+}
+.pomodoro-timer .task-list .task .completed-checkbox.completed::after {
+  border-color: rgb(255, 255, 255);
+}
+
+.pomodoro-timer .task-list input {
+  border: none;
+  outline: none;
+}
+.pomodoro-timer .task-list .left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  order: 1;
+}
+.pomodoro-timer .task-list .right {
+  order: 2;
+}
+.pomodoro-timer .task-list .right {
+  color: rgb(187, 187, 187);
+}
+.pomodoro-timer .task-list input,
+.pomodoro-timer .task-list .right,
+.pomodoro-timer .task-list .right div {
+  display: inline-block;
+}
+.pomodoro-timer .task-list .taskNameInput {
+  display: inline-block;
+  order: 1;
+  margin-left: 1em;
+  color: rgb(85, 85, 85);
+  font-size: 0.9em;
+  font-weight: 500;
+}
+.pomodoro-timer .task-list .pomodoroEstInput {
+  width: 10px;
+  font-size: 0.8em;
+}
+/* ===============
+   task-list / add/task
+   =============== */
+.pomodoro-timer .task-list .add-task {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.8;
+  margin-top: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  padding: 12px 0px;
+}
+.pomodoro-timer .task-list .add-task .icon {
+  margin-right: 6px;
+  transform: scale(0.9);
+}
+/* ===============
+   task-list / scrollbar
+   =============== */
+.pomodoro-timer .task-list ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pomodoro-timer .task-list ::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.pomodoro-timer .task-list ::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
