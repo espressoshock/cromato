@@ -370,7 +370,13 @@ class PomodoroTimer extends Component {
           </div>
           <div
             className="context-menu"
-            onClick={(e) => this.props.onTLTaskDelete(task.id)}
+            onClick={(e) => {
+              this.props.onTLTaskDelete(task.id);
+              if (this.props.tasks?.length === 1)
+                setTimeout(() => {
+                  this.openTaskList(e);
+                }, 800);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
