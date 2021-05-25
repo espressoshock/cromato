@@ -53,3 +53,18 @@
   justify-content: center;
   align-items: center;
 }
+/* ===============
+     settings-modal
+     =============== */
+.modal-close-button {
+  float: right;
+  margin-bottom: -20px !important;
+  position: relative !important;
+  top: -9px;
+}
+.MuiDialog-root li {
+  border-top: 1px solid rgba(182, 165, 166, 0.2);
+}
+.MuiDialogActions-root {
+  background-color: rgba(239, 239, 239, 0.8);
+}

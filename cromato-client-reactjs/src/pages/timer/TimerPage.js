@@ -10,6 +10,21 @@ import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
+import InfoIcon from '@material-ui/icons/Info';
+import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
+import Switch from '@material-ui/core/Switch';
 
 import { initializeApp } from 'firebase/app';
 import {
@@ -29,6 +44,7 @@ import {
   serverTimestamp,
   deleteDoc,
 } from 'firebase/firestore';
+import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3pQsx-EOXyJoS4ckyTl-WUfULEJtBGJU',
@@ -52,6 +68,10 @@ class TimerPage extends Component {
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
+    settingsModalOpen: true,
+    settings: {
+      offlineMode: false,
+    },
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -77,11 +97,16 @@ class TimerPage extends Component {
     });
   }
   openAvatarContextMenu = (e) => {
-    console.log('open');
     this.setState({ avatarContextMenuAE: e.currentTarget });
   };
   closeAvatarContextMenu = () => {
     this.setState({ avatarContextMenuAE: null });
+  };
+  openSettingsModal = (e) => {
+    this.setState({ settingsModalOpen: true });
+  };
+  closeSettingsModal = (e) => {
+    this.setState({ settingsModalOpen: false });
   };
   login = (e) => {
     signInWithPopup(auth, provider)
@@ -274,6 +299,15 @@ class TimerPage extends Component {
       console.log('document updated');
     })();
   };
+  ///////////////////////////////////
+  ////////////////  SETTINGS
+  ///////////////////////////////////
+  toggleOfflineMode = (e) => {
+    const settings = { ...this.state.setttings };
+    settings.offlineMode = e.target.checked;
+    console.log(e.target.checked);
+    this.setState({ settings: settings });
+  };
   render() {
     return (
       <div className="timer-page">
@@ -293,7 +327,7 @@ class TimerPage extends Component {
                 text="Settings"
                 icon={SettingsIcon}
                 size="m"
-                onButtonClicked={(e) => this.openAvatarContextMenu(e)}
+                onButtonClicked={(e) => this.openSettingsModal(e)}
               />
               {this.renderLogin()}
               <Menu
@@ -326,6 +360,60 @@ class TimerPage extends Component {
             onPomodoroElapsed={(e) => this.onPomodoroElapsed(e)}
           />
         </div>
+        <Dialog
+          open={this.state.settingsModalOpen}
+          onClose={(e) => this.closeSettingsModal(e)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          maxWidth={'xs'}
+          fullWidth="true"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Settings'}
+            <IconButton
+              aria-label="close"
+              onClick={(e) => this.closeSettingsModal(e)}
+              className="modal-close-button"
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent dividers>
+            <DialogContent id="alert-dialog-description">
+              Here you can customize the in-app settings
+              <List>
+                <ListItem>
+                  <ListItemIcon>
+                    <OfflineBoltIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Offline Mode"
+                    secondary="Keep working when offline"
+                  />
+                  <ListItemSecondaryAction>
+                    <Switch
+                      edge="end"
+                      onChange={(e) => this.toggleOfflineMode(e)}
+                      checked={this.state.settings.offlineMode}
+                      inputProps={{
+                        'aria-labelledby': 'switch-list-label-wifi',
+                      }}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              </List>
+            </DialogContent>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={(e) => this.closeSettingsModal(e)}
+              color="primary"
+              autoFocus
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
