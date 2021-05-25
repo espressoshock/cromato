@@ -7,7 +7,6 @@ import SettingsIcon from './images/icons/icon-settings.svg';
 import LoginIcon from './images/icons/icon-login.svg';
 import PomodoroTimer from '../../components/pomodoro-timer/PomodoroTimer';
 import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
-import HelpIcon from './images/icons/icon-help.svg';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -21,6 +20,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import CenterFocusStrongIcon from '@material-ui/icons/CenterFocusStrong';
 
 import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
 import {
@@ -30,6 +31,7 @@ import {
 } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 import Snackbar from '@material-ui/core/Snackbar';
+import Select from '@material-ui/core/Select';
 
 //icons
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
@@ -39,9 +41,7 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import TimelapseIcon from '@material-ui/icons/Timelapse';
 
-import { useHistory } from 'react-router-dom';
-
-import { app, initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   signInWithPopup,
@@ -88,14 +88,17 @@ class TimerPage extends Component {
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
-    settingsModalOpen: false,
+    settingsModalOpen: true,
     reportModalOpen: false,
     settings: {
       offlineMode: false,
     },
+    pomodoroDuration: 0.1,
     snackbarVisibility: false,
     snackbarMode: 'light',
     snackbarMessage: '',
+    autoClose: true,
+    autoFocus: true,
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -528,6 +531,17 @@ class TimerPage extends Component {
       else (async () => await disableNetwork(db))();
     })();
   };
+  handlePomodoroDurationChange = (e) => {
+    console.log('c', e.target.value);
+    this.setState({ pomodoroDuration: e.target.value });
+  };
+  toggleAutoClose = (e) => {
+    this.setState({ autoClose: !this.state.autoClose });
+  };
+  toggleAutoFocus = (e) => {
+    this.setState({ autoFocus: !this.state.autoFocus });
+  };
+
   ///////////////////////////////////
   ////////////////  notification snackbar
   ///////////////////////////////////
@@ -548,14 +562,6 @@ class TimerPage extends Component {
               <div className="logo">Cromato</div>
             </div>
             <div className="right">
-              <ActionButton
-                text="How it works"
-                icon={HelpIcon}
-                size="m"
-                onButtonClicked={(e) => {
-                  '';
-                }}
-              />
               <ActionButton
                 text="Report"
                 icon={ReportIcon}
@@ -587,6 +593,9 @@ class TimerPage extends Component {
             tasks={this.state.tasks}
             aTask={this.state.cTask}
             clearFlag={this.state.timerClearFlag}
+            autoFocus={this.state.autoFocus}
+            autoClose={this.state.autoClose}
+            pomodoroDuration={this.state.pomodoroDuration}
             onTaskSubmit={(e) => this.onTaskSubmit(e)}
             onTaskNameChangeOrSubmit={(e) => this.onTaskNameChangeOrSubmit(e)}
             onEstPomodorosUpdate={(e) => this.onEstPomodorosUpdate(e)}
@@ -604,7 +613,7 @@ class TimerPage extends Component {
           onClose={(e) => this.closeSettingsModal(e)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          maxWidth={'xs'}
+          maxWidth={'sm'}
           fullWidth={true}
         >
           <DialogTitle id="alert-dialog-title">
@@ -621,6 +630,65 @@ class TimerPage extends Component {
             <DialogContent id="alert-dialog-description">
               Here you can customize the in-app settings
               <List>
+                <ListItem>
+                  <ListItemIcon>
+                    <TimelapseIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Pomodoro duration"
+                    secondary="Set the timer duration of each pomodoro"
+                  />
+                  <ListItemSecondaryAction>
+                    <Select
+                      labelId="pomodoro-d-select"
+                      id="pomodoro-d-select"
+                      value={this.state.pomodoroDuration}
+                      onChange={(e) => this.handlePomodoroDurationChange(e)}
+                    >
+                      <MenuItem value={0.1}>10s</MenuItem>
+                      <MenuItem value={15}>15min</MenuItem>
+                      <MenuItem value={25}>25min</MenuItem>
+                    </Select>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <MenuOpenIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Auto-close"
+                    secondary="Close the task list drawer when no task are available"
+                  />
+                  <ListItemSecondaryAction>
+                    <Switch
+                      edge="end"
+                      onChange={(e) => this.toggleAutoClose(e)}
+                      checked={this.state.autoClose}
+                      inputProps={{
+                        'aria-labelledby': 'switch-list-label-wifi',
+                      }}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <CenterFocusStrongIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Auto-focus"
+                    secondary="Go automatically into editiing-mode after a task has been created"
+                  />
+                  <ListItemSecondaryAction>
+                    <Switch
+                      edge="end"
+                      onChange={(e) => this.toggleAutoFocus(e)}
+                      checked={this.state.autoFocus}
+                      inputProps={{
+                        'aria-labelledby': 'switch-list-label-wifi',
+                      }}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
                 <ListItem>
                   <ListItemIcon>
                     <OfflineBoltIcon />

@@ -376,10 +376,14 @@ class PomodoroTimer extends Component {
             className="context-menu"
             onClick={(e) => {
               this.props.onTLTaskDelete(task.id);
-              if (this.props.tasks?.length === 1)
-                setTimeout(() => {
-                  this.openTaskList(e);
-                }, 800);
+              console.log('autoclose', this.props.autoClose);
+              if (this.props.tasks?.length === 1) {
+                if (this.props.autoClose) {
+                  setTimeout(() => {
+                    this.openTaskList(e);
+                  }, 800);
+                }
+              }
             }}
           >
             <svg
@@ -722,10 +726,12 @@ class PomodoroTimer extends Component {
               <div
                 className="task add-task"
                 onClick={(e) => {
-                  setTimeout(() => {
-                    this.openTaskList(e);
-                  }, 800);
                   this.props.onAddTask(e);
+                  if (this.props.autoFocus) {
+                    setTimeout(() => {
+                      this.openTaskList(e);
+                    }, 800);
+                  }
                 }}
               >
                 <svg
