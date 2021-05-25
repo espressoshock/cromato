@@ -240,6 +240,33 @@ class TimerPage extends Component {
         this.setState({ cTask: { ...tTask, id: docRef.id } });
         console.log('cTask: ', this.state.cTask);
       })();
+      (async () => {
+        await setDoc(
+          doc(db, 'users', auth.currentUser.providerData[0].uid),
+          {
+            taskCreated:
+              Number.isNaN(this.state.settings.taskCreated) ||
+              this.state.settings.taskCreated === undefined
+                ? 1
+                : this.state.settings.taskCreated + 1,
+          },
+          { merge: true }
+        );
+      })();
+      (async () => {
+        await setDoc(
+          doc(db, 'users', auth.currentUser.providerData[0].uid),
+          {
+            pomodoroEstimated:
+              Number.isNaN(this.state.settings.pomodoroEstimated) ||
+              this.state.settings.pomodoroEstimated === undefined
+                ? task.pomodoroEstimated
+                : this.state.settings.pomodoroEstimated +
+                  task.pomodoroEstimated,
+          },
+          { merge: true }
+        );
+      })();
     } else {
       //upating
       (async () => {
@@ -306,6 +333,17 @@ class TimerPage extends Component {
             this.state.settings.taskCreated === undefined
               ? 1
               : this.state.settings.taskCreated + 1,
+        },
+        { merge: true }
+      );
+      await setDoc(
+        doc(db, 'users', auth.currentUser.providerData[0].uid),
+        {
+          pomodoroEstimated:
+            Number.isNaN(this.state.settings.pomodoroEstimated) ||
+            this.state.settings.pomodoroEstimated === undefined
+              ? tTask.pomodoroEstimated
+              : this.state.settings.pomodoroEstimated + tTask.pomodoroEstimated,
         },
         { merge: true }
       );
