@@ -2,13 +2,11 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user);
 });
 
-passport.deserializeUser(async (id, done) => {
-  console.log('id: ', id);
-  const user = await User.findById(id);
-
+passport.deserializeUser(async (user, done) => {
+  //console.log('user-des: ', user);
   done(null, user);
 });
 
@@ -20,7 +18,7 @@ passport.use(
       callbackURL: 'http://localhost:5000/api/auth/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log('profile: ', profile);
+      // console.log('profile: ', profile);
       done(null, profile);
     }
   )
