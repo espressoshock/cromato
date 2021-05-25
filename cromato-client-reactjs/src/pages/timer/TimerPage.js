@@ -22,9 +22,21 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
-import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
+import {
+  Divider,
+  ListItemIcon,
+  ListItemSecondaryAction,
+} from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 import Snackbar from '@material-ui/core/Snackbar';
+
+//icons
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import TimelapseIcon from '@material-ui/icons/Timelapse';
 
 import { app, initializeApp } from 'firebase/app';
 import {
@@ -74,7 +86,7 @@ class TimerPage extends Component {
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
     settingsModalOpen: false,
-    reportModalOpen: true,
+    reportModalOpen: false,
     settings: {
       offlineMode: false,
     },
@@ -635,7 +647,7 @@ class TimerPage extends Component {
           onClose={(e) => this.closeReportModal(e)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          maxWidth={'xl'}
+          maxWidth={'xs'}
           fullWidth={true}
           onEntered={(e) => this.reportModalOpened()}
         >
@@ -650,37 +662,67 @@ class TimerPage extends Component {
             </IconButton>
           </DialogTitle>
           <DialogContent dividers>
-            <DialogContent id="alert-dialog-description">
-              Here are the statistics
+            <DialogContent
+              id="alert-dialog-description"
+              className="reportModal-content"
+            >
+              <div className="heading">
+                Below you can find your overall performance and statistics
+              </div>
+              <Divider />
               <div className="metrics-wrapper">
                 <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">7</div>
+                  <div className="icon">
+                    <TimelapseIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.pomodoroCompleted}
+                  </div>
                   <div className="description">Pomodoro completed</div>
                 </div>
                 <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">7</div>
+                  <div className="icon">
+                    <ListAltIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.pomodoroEstimated}
+                  </div>
                   <div className="description">Pomodoro estimated</div>
                 </div>
-                <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">1</div>
+                <div className="card task-completed">
+                  <div className="icon">
+                    <AssignmentTurnedInIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.taskCompleted}
+                  </div>
                   <div className="description">Task completed</div>
                 </div>
                 <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">3</div>
+                  <div className="icon">
+                    <AddBoxIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.taskCreated}
+                  </div>
                   <div className="description">Task created</div>
                 </div>
                 <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">3</div>
+                  <div className="icon">
+                    <DeleteForeverIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.taskDeleted}
+                  </div>
                   <div className="description">Task deleted</div>
                 </div>
                 <div className="card">
-                  <div className="icon"></div>
-                  <div className="value">33.7</div>
+                  <div className="icon">
+                    <AccessTimeIcon fontSize="large" />
+                  </div>
+                  <div className="value">
+                    {this.state.settings?.pomodoroCompleted * 25}
+                  </div>
                   <div className="description">Hours focused</div>
                 </div>
               </div>
