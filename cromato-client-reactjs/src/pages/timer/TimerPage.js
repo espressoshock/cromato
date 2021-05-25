@@ -26,7 +26,7 @@ import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 import Snackbar from '@material-ui/core/Snackbar';
 
-import { initializeApp } from 'firebase/app';
+import { app, initializeApp } from 'firebase/app';
 import {
   getAuth,
   signInWithPopup,
@@ -333,6 +333,27 @@ class TimerPage extends Component {
       console.log('document updated');
       this.showNotification('Task marked as completed!');
     })();
+    //update global stat
+    if (!completed) {
+      (async () => {
+        console.log(
+          'trying',
+          !Number.isNaN(this.state.settings.pomodoroCompleted)
+        );
+        console.log(this.state.settings.pomodoroCompleted);
+        await setDoc(
+          doc(db, 'users', auth.currentUser.providerData[0].uid),
+          {
+            pomodoroCompleted: Number.isNaN(
+              this.state.settings.pomodoroCompleted
+            )
+              ? 0
+              : this.state.settings.pomodoroCompleted + 1,
+          },
+          { merge: true }
+        );
+      })();
+    }
   };
   onPomodoroElapsed = (e) => {
     (async () => {
@@ -356,21 +377,21 @@ class TimerPage extends Component {
   ////////////////  SETTINGS
   ///////////////////////////////////
   loadSettings = () => {
-    onSnapshot(
+    const unsub = onSnapshot(
       doc(db, 'users', auth.currentUser.providerData[0].uid),
       (doc) => {
+        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
         console.log('Current data: ', doc.data());
         const source = doc.metadata.fromCache ? 'local cache' : 'server';
         console.log('Data came from ' + source);
-        this.setState({ settings: doc.data() }, () => {
-          //apply settings
-          //offline mode
-          if (!this.state.settings?.offlineMode)
-            (async () => await enableNetwork(db))();
-          else (async () => await disableNetwork(db))();
-        });
+        this.setState({ settings: doc.data() }, () => {});
       }
     );
+    //apply settings
+    //offline mode
+    if (!this.state.settings?.offlineMode)
+      (async () => await enableNetwork(db))();
+    else (async () => await disableNetwork(db))();
   };
 
   toggleOfflineMode = (e) => {
@@ -379,9 +400,13 @@ class TimerPage extends Component {
     this.setState({ settings: settings });
 
     (async () => {
-      await setDoc(doc(db, 'users', auth.currentUser.providerData[0].uid), {
-        offlineMode: e.target.checked,
-      });
+      await setDoc(
+        doc(db, 'users', auth.currentUser.providerData[0].uid),
+        {
+          offlineMode: e.target.checked,
+        },
+        { merge: true }
+      );
       console.log('settings updated');
       if (!e.target.checked) (async () => await enableNetwork(db))();
       else (async () => await disableNetwork(db))();
