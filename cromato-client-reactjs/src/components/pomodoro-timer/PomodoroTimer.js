@@ -304,7 +304,7 @@ class PomodoroTimer extends Component {
           />
         </div>
         <div className="task-completion">
-          <div className="c-pomodoro">1</div>
+          <div className="c-pomodoro">{this.props.aTask?.pomodoroElapsed}</div>
           <div className="separator">/</div>
           <div className="a-pomodoro">
             <input
