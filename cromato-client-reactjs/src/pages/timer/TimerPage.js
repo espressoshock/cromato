@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import ActionButton from '../../components/action-button/ActionButton';
 import './TimerPage.css';
 
@@ -24,6 +24,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
 import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import { initializeApp } from 'firebase/app';
 import {
@@ -76,6 +77,9 @@ class TimerPage extends Component {
     settings: {
       offlineMode: false,
     },
+    snackbarVisibility: false,
+    snackbarMode: 'light',
+    snackbarMessage: '',
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -102,6 +106,11 @@ class TimerPage extends Component {
             tTasks.push({ ...doc.data(), id: doc.id });
             const source = doc.metadata.fromCache ? 'local cache' : 'server';
             console.log('Data came from ' + source);
+            if (doc.metadata.fromCache)
+              this.showNotification(
+                'You are offline, data cached locally',
+                'dark'
+              );
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
@@ -192,6 +201,7 @@ class TimerPage extends Component {
         console.log('Document written with ID: ', docRef.id);
         this.setState({ cTask: { ...tTask, id: docRef.id } });
         console.log('cTask: ', this.state.cTask);
+        this.showNotification('Task added');
       })();
     }
   };
@@ -273,6 +283,7 @@ class TimerPage extends Component {
       );
       this.setState({ cTask: { ...tTask, id: docRef.id } });
       console.log('cTask: ', this.state.cTask);
+      this.showNotification('Task added successfully!');
     })();
   };
   onTLTaskDelete = (id) => {
@@ -289,6 +300,7 @@ class TimerPage extends Component {
       }
 
       console.log('document deleted');
+      this.showNotification('Task deleted successfully!');
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
@@ -303,6 +315,7 @@ class TimerPage extends Component {
         this.setState({ cTask: ref });
       }
       console.log('document updated');
+      this.showNotification('Task marked as completed!');
     })();
   };
   onPomodoroElapsed = (e) => {
@@ -325,7 +338,13 @@ class TimerPage extends Component {
       console.log('Current data: ', doc.data());
       const source = doc.metadata.fromCache ? 'local cache' : 'server';
       console.log('Data came from ' + source);
-      this.setState({ settings: doc.data() });
+      this.setState({ settings: doc.data() }, () => {
+        //apply settings
+        //offline mode
+        if (!this.state.settings.offlineMode)
+          (async () => await enableNetwork(db))();
+        else (async () => await disableNetwork(db))();
+      });
     });
   };
 
@@ -342,6 +361,17 @@ class TimerPage extends Component {
       if (!e.target.checked) (async () => await enableNetwork(db))();
       else (async () => await disableNetwork(db))();
     })();
+  };
+  ///////////////////////////////////
+  ////////////////  notification snackbar
+  ///////////////////////////////////
+  showNotification = (message, mode = 'light') => {
+    this.setState({ snackbarMessage: message });
+    this.setState({ snackbarVisibility: true });
+    if (mode !== 'light') this.setState({ snackbarMode: mode });
+  };
+  hideNotification = () => {
+    this.setState({ snackbarVisibility: false });
   };
   render() {
     return (
@@ -449,6 +479,36 @@ class TimerPage extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          className={this.state.snackbarMode}
+          autoHideDuration={3000}
+          open={this.state.snackbarVisibility}
+          onClose={(e) => this.hideNotification(e)}
+          message={this.state.snackbarMessage}
+          action={
+            <Fragment>
+              <Button
+                color="secondary"
+                size="small"
+                onClick={(e) => this.hideNotification(e)}
+              >
+                DISMISS
+              </Button>
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={(e) => this.hideNotification(e)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Fragment>
+          }
+        />
       </div>
     );
   }
