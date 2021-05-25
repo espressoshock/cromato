@@ -65,6 +65,15 @@
 .MuiDialog-root li {
   border-top: 1px solid rgba(182, 165, 166, 0.2);
 }
-.MuiDialogActions-root {
-  background-color: rgba(239, 239, 239, 0.8);
+.MuiSnackbarContent-root {
+  color: black !important;
+  background-color: white !important;
+}
+.light .MuiSnackbarContent-root {
+  color: black !important;
+  background-color: white !important;
+}
+.dark .MuiSnackbarContent-root {
+  color: #fff !important;
+  background-color: rgb(49, 49, 49) !important;
 }

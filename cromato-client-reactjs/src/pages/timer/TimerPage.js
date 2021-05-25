@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import ActionButton from '../../components/action-button/ActionButton';
 import './TimerPage.css';
 
@@ -17,14 +17,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import InfoIcon from '@material-ui/icons/Info';
 import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
+import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import { initializeApp } from 'firebase/app';
 import {
@@ -37,6 +37,7 @@ import { getFirestore, updateDoc } from 'firebase/firestore';
 
 import {
   collection,
+  setDoc,
   addDoc,
   doc,
   query,
@@ -44,7 +45,11 @@ import {
   serverTimestamp,
   deleteDoc,
 } from 'firebase/firestore';
-import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
+import {
+  enableIndexedDbPersistence,
+  disableNetwork,
+  enableNetwork,
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3pQsx-EOXyJoS4ckyTl-WUfULEJtBGJU',
@@ -68,10 +73,13 @@ class TimerPage extends Component {
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
-    settingsModalOpen: true,
+    settingsModalOpen: false,
     settings: {
       offlineMode: false,
     },
+    snackbarVisibility: false,
+    snackbarMode: 'light',
+    snackbarMessage: '',
   };
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -79,11 +87,30 @@ class TimerPage extends Component {
         this.setState({ auth: true });
         this.setState({ owner: user });
 
+        //enable persistence
+        enableIndexedDbPersistence(db).catch((err) => {
+          if (err.code === 'failed-precondition') {
+            console.log('error failed-precondition');
+          } else if (err.code === 'unimplemented') {
+            console.log('error unimplemented');
+          }
+        });
+
+        //load settings
+        this.loadSettings();
+
         const q = query(collection(db, `users/${auth.currentUser.uid}/tasks`));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const tTasks = [];
           querySnapshot.forEach((doc) => {
             tTasks.push({ ...doc.data(), id: doc.id });
+            const source = doc.metadata.fromCache ? 'local cache' : 'server';
+            console.log('Data came from ' + source);
+            if (doc.metadata.fromCache)
+              this.showNotification(
+                'You are offline, data cached locally',
+                'dark'
+              );
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
@@ -174,6 +201,7 @@ class TimerPage extends Component {
         console.log('Document written with ID: ', docRef.id);
         this.setState({ cTask: { ...tTask, id: docRef.id } });
         console.log('cTask: ', this.state.cTask);
+        this.showNotification('Task added');
       })();
     }
   };
@@ -255,6 +283,7 @@ class TimerPage extends Component {
       );
       this.setState({ cTask: { ...tTask, id: docRef.id } });
       console.log('cTask: ', this.state.cTask);
+      this.showNotification('Task added successfully!');
     })();
   };
   onTLTaskDelete = (id) => {
@@ -271,6 +300,7 @@ class TimerPage extends Component {
       }
 
       console.log('document deleted');
+      this.showNotification('Task deleted successfully!');
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
@@ -285,6 +315,7 @@ class TimerPage extends Component {
         this.setState({ cTask: ref });
       }
       console.log('document updated');
+      this.showNotification('Task marked as completed!');
     })();
   };
   onPomodoroElapsed = (e) => {
@@ -302,11 +333,45 @@ class TimerPage extends Component {
   ///////////////////////////////////
   ////////////////  SETTINGS
   ///////////////////////////////////
+  loadSettings = () => {
+    onSnapshot(doc(db, 'users', auth.currentUser.uid), (doc) => {
+      console.log('Current data: ', doc.data());
+      const source = doc.metadata.fromCache ? 'local cache' : 'server';
+      console.log('Data came from ' + source);
+      this.setState({ settings: doc.data() }, () => {
+        //apply settings
+        //offline mode
+        if (!this.state.settings.offlineMode)
+          (async () => await enableNetwork(db))();
+        else (async () => await disableNetwork(db))();
+      });
+    });
+  };
+
   toggleOfflineMode = (e) => {
     const settings = { ...this.state.setttings };
     settings.offlineMode = e.target.checked;
-    console.log(e.target.checked);
     this.setState({ settings: settings });
+
+    (async () => {
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        offlineMode: e.target.checked,
+      });
+      console.log('settings updated');
+      if (!e.target.checked) (async () => await enableNetwork(db))();
+      else (async () => await disableNetwork(db))();
+    })();
+  };
+  ///////////////////////////////////
+  ////////////////  notification snackbar
+  ///////////////////////////////////
+  showNotification = (message, mode = 'light') => {
+    this.setState({ snackbarMessage: message });
+    this.setState({ snackbarVisibility: true });
+    if (mode !== 'light') this.setState({ snackbarMode: mode });
+  };
+  hideNotification = () => {
+    this.setState({ snackbarVisibility: false });
   };
   render() {
     return (
@@ -366,7 +431,7 @@ class TimerPage extends Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           maxWidth={'xs'}
-          fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle id="alert-dialog-title">
             {'Settings'}
@@ -414,6 +479,36 @@ class TimerPage extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          className={this.state.snackbarMode}
+          autoHideDuration={3000}
+          open={this.state.snackbarVisibility}
+          onClose={(e) => this.hideNotification(e)}
+          message={this.state.snackbarMessage}
+          action={
+            <Fragment>
+              <Button
+                color="secondary"
+                size="small"
+                onClick={(e) => this.hideNotification(e)}
+              >
+                DISMISS
+              </Button>
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={(e) => this.hideNotification(e)}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Fragment>
+          }
+        />
       </div>
     );
   }
