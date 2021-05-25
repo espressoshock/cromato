@@ -326,13 +326,7 @@ class PomodoroTimer extends Component {
       <div
         className={
           `task ${this.props.aTask?.id === task.id ? 'active' : ''} ` +
-          `${
-            this.props.aTask !== undefined
-              ? this.props.aTask?.completed
-                ? 'completed'
-                : ''
-              : ''
-          }`
+          `${task.completed ? 'completed' : ''}`
         }
         key={i}
         onClick={(e) =>
@@ -362,6 +356,7 @@ class PomodoroTimer extends Component {
             type="text"
             className="taskNameInput"
             placeholder={task.name}
+            value={task.name}
             onBlur={(e) => this.handleTaskNameUpdate(e)}
             readOnly="readonly"
           />
