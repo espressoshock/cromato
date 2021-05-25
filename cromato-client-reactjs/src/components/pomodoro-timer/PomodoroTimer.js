@@ -324,7 +324,16 @@ class PomodoroTimer extends Component {
   renderTLTask = (task, i) => {
     return (
       <div
-        className={`task ${this.props.aTask?.id === task.id ? 'active' : ''} `}
+        className={
+          `task ${this.props.aTask?.id === task.id ? 'active' : ''} ` +
+          `${
+            this.props.aTask !== undefined
+              ? this.props.aTask?.completed
+                ? 'completed'
+                : ''
+              : ''
+          }`
+        }
         key={i}
         onClick={(e) =>
           this.tlTaskClicked(
