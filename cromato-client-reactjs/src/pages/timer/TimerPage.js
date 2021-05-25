@@ -296,6 +296,20 @@ class TimerPage extends Component {
       console.log('cTask: ', this.state.cTask);
       this.showNotification('Task added successfully!');
     })();
+    //update global stats
+    (async () => {
+      await setDoc(
+        doc(db, 'users', auth.currentUser.providerData[0].uid),
+        {
+          taskCreated:
+            Number.isNaN(this.state.settings.taskCreated) ||
+            this.state.settings.taskCreated === undefined
+              ? 1
+              : this.state.settings.taskCreated + 1,
+        },
+        { merge: true }
+      );
+    })();
   };
   onTLTaskDelete = (id) => {
     console.log('id', id);
@@ -314,6 +328,20 @@ class TimerPage extends Component {
 
       console.log('document deleted');
       this.showNotification('Task deleted successfully!');
+    })();
+    //update global stats
+    (async () => {
+      await setDoc(
+        doc(db, 'users', auth.currentUser.providerData[0].uid),
+        {
+          taskDeleted:
+            Number.isNaN(this.state.settings.taskDeleted) ||
+            this.state.settings.taskDeleted === undefined
+              ? 1
+              : this.state.settings.taskDeleted + 1,
+        },
+        { merge: true }
+      );
     })();
   };
   onTLTaskCompleteClicked = (id, completed) => {
@@ -336,19 +364,14 @@ class TimerPage extends Component {
     //update global stat
     if (!completed) {
       (async () => {
-        console.log(
-          'trying',
-          !Number.isNaN(this.state.settings.pomodoroCompleted)
-        );
-        console.log(this.state.settings.pomodoroCompleted);
         await setDoc(
           doc(db, 'users', auth.currentUser.providerData[0].uid),
           {
-            pomodoroCompleted: Number.isNaN(
-              this.state.settings.pomodoroCompleted
-            )
-              ? 0
-              : this.state.settings.pomodoroCompleted + 1,
+            taskCompleted:
+              Number.isNaN(this.state.settings.taskCompleted) ||
+              this.state.settings.taskCompleted === undefined
+                ? 1
+                : this.state.settings.taskCompleted + 1,
           },
           { merge: true }
         );
