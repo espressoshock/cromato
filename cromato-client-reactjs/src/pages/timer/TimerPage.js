@@ -95,6 +95,7 @@ class TimerPage extends Component {
       });
   };
   signOut = (e) => {
+    this.closeAvatarContextMenu(e); //auto-close context menu
     signOut(auth).then(() => {
       this.setState({ tasks: [] });
       this.setState({ cTask: undefined });
