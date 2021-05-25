@@ -7,6 +7,7 @@ import SettingsIcon from './images/icons/icon-settings.svg';
 import LoginIcon from './images/icons/icon-login.svg';
 import PomodoroTimer from '../../components/pomodoro-timer/PomodoroTimer';
 import ProfileThumb from '../../components/profile-thumb/ProfileThumb';
+import HelpIcon from './images/icons/icon-help.svg';
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -37,6 +38,8 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import TimelapseIcon from '@material-ui/icons/Timelapse';
+
+import { useHistory } from 'react-router-dom';
 
 import { app, initializeApp } from 'firebase/app';
 import {
@@ -545,6 +548,14 @@ class TimerPage extends Component {
               <div className="logo">Cromato</div>
             </div>
             <div className="right">
+              <ActionButton
+                text="How it works"
+                icon={HelpIcon}
+                size="m"
+                onButtonClicked={(e) => {
+                  '';
+                }}
+              />
               <ActionButton
                 text="Report"
                 icon={ReportIcon}
