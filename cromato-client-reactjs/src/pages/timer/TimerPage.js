@@ -195,7 +195,7 @@ class TimerPage extends Component {
         console.log('document updated');
         let ref = { ...this.state.cTask };
         ref.name = task.name;
-        this.setState({ ref });
+        this.setState({ cTask: ref });
       })();
     }
   };
@@ -253,7 +253,12 @@ class TimerPage extends Component {
       await updateDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), {
         completed: !completed,
       });
-
+      if (this.state.cTask?.id === id) {
+        let ref = { ...this.state.cTask };
+        const c = !completed;
+        ref.completed = c;
+        this.setState({ cTask: ref });
+      }
       console.log('document updated');
     })();
   };
