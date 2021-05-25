@@ -1,0 +1,16 @@
+{
+  "name": "cromato-server-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "heroku-postbuild": "cd cromato-client-reactjs && npm install --only=dev && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": "Vincenzo Buono",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
