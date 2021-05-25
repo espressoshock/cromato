@@ -7,6 +7,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 require('./passport-setup');
 
+//firebase admin sdk
+const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const db = admin.firestore();
+
 const app = express();
 
 app.use(cors());
@@ -32,8 +42,16 @@ const isAuth = (req, res, next) => {
   if (req.user) next();
   else res.sendStatus(401);
 };
+app.get('/api', (req, res) => {
+  if (req.user) res.redirect('/api/statistics');
+  //we're auth
+  else res.redirect('/api/auth'); //we need auth
+  res.redirect('/api/loggedout');
+});
 
-app.get('/api/loggedout', (req, res) => res.send('You log out'));
+app.get('/api/loggedout', (req, res) =>
+  res.json({ op: 'Successful', message: 'You sign out' })
+);
 app.get('/api/signout', (req, res) => {
   req.session = null; // destroy session
   req.logout();
@@ -41,11 +59,37 @@ app.get('/api/signout', (req, res) => {
 });
 
 app.get('/api/fail', (req, res) =>
-  res.send('Auth failed - You need to auth before accessing the API')
+  res.json({
+    op: 'Error',
+    messge: 'Auth failed',
+  })
 );
 app.get('/api/statistics', isAuth, (req, res) => {
-  console.log('req-user:', req.user);
-  res.send('Auth successful - here are your statistics: ');
+  //console.log('req-user:', req.user);
+  (async () => {
+    const statisticSnapshot = await db
+      .collection('users')
+      .doc(req.user.id)
+      .get();
+    const tasksSnapshot = await db
+      .collection(`users/${req.user.id}/tasks`)
+      .get();
+    if (statisticSnapshot.exists)
+      console.log('statistic-', statisticSnapshot.data());
+    let tasksData = [];
+    tasksSnapshot.forEach((doc) => {
+      //console.log('tasks-', doc.data());
+      tasksData.push(doc);
+    });
+
+    res.json({
+      status: 'account active',
+      reponseStatus: 200,
+      user: req.user,
+      statistics: statisticSnapshot,
+      tasksData: tasksData,
+    });
+  })();
 });
 app.get(
   '/api/auth',
@@ -55,8 +99,7 @@ app.get(
   '/api/auth/callback',
   passport.authenticate('google', { failureRedirect: 'api/fail' }),
   function (req, res) {
-    //console.log('callback: ', req.user);
-    // Successful authentication, redirect home.
+    // Successful authentication, redirect to statistics.
     res.redirect('/api/statistics');
   }
 );
