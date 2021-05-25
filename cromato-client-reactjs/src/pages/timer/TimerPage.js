@@ -328,6 +328,9 @@ class TimerPage extends Component {
       );
 
       console.log('document updated');
+      const ctask = { ...this.state.cTask };
+      ctask.pomodoroElapsed = ctask.pomodoroElapsed + 1;
+      this.setState({ cTask: ctask });
     })();
   };
   ///////////////////////////////////
