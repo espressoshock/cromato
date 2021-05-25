@@ -99,7 +99,9 @@ class TimerPage extends Component {
         //load settings
         this.loadSettings();
 
-        const q = query(collection(db, `users/${auth.currentUser.uid}/tasks`));
+        const q = query(
+          collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`)
+        );
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const tTasks = [];
           querySnapshot.forEach((doc) => {
@@ -195,7 +197,7 @@ class TimerPage extends Component {
       });
       (async () => {
         const docRef = await addDoc(
-          collection(db, `users/${auth.currentUser.uid}/tasks`),
+          collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`),
           tTask
         );
         console.log('Document written with ID: ', docRef.id);
@@ -208,7 +210,10 @@ class TimerPage extends Component {
   onCurrentTaskNameUpdate = (task) => {
     (async () => {
       await updateDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
+        doc(
+          db,
+          `users/${auth.currentUser.providerData[0].uid}/tasks/${this.state.cTask.id}`
+        ),
         {
           name: task.name,
         }
@@ -228,7 +233,7 @@ class TimerPage extends Component {
       });
       (async () => {
         const docRef = await addDoc(
-          collection(db, `users/${auth.currentUser.uid}/tasks`),
+          collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`),
           tTask
         );
         console.log('Document written with ID: ', docRef.id);
@@ -239,7 +244,10 @@ class TimerPage extends Component {
       //upating
       (async () => {
         await updateDoc(
-          doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
+          doc(
+            db,
+            `users/${auth.currentUser.providerData[0].uid}/tasks/${this.state.cTask.id}`
+          ),
           {
             name: task.name,
           }
@@ -255,7 +263,10 @@ class TimerPage extends Component {
   onEstPomodorosUpdate = (update) => {
     (async () => {
       await updateDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
+        doc(
+          db,
+          `users/${auth.currentUser.providerData[0].uid}/tasks/${this.state.cTask.id}`
+        ),
         {
           pomodoroEstimated: update.pomodoroEstimated,
         }
@@ -278,7 +289,7 @@ class TimerPage extends Component {
     });
     (async () => {
       const docRef = await addDoc(
-        collection(db, `users/${auth.currentUser.uid}/tasks`),
+        collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`),
         tTask
       );
       this.setState({ cTask: { ...tTask, id: docRef.id } });
@@ -289,7 +300,9 @@ class TimerPage extends Component {
   onTLTaskDelete = (id) => {
     console.log('id', id);
     (async () => {
-      await deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
+      await deleteDoc(
+        doc(db, `users/${auth.currentUser.providerData[0].uid}/tasks/${id}`)
+      );
 
       if (this.state.cTask.id === id) {
         this.setState({ cTask: undefined });
@@ -305,9 +318,12 @@ class TimerPage extends Component {
   };
   onTLTaskCompleteClicked = (id, completed) => {
     (async () => {
-      await updateDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), {
-        completed: !completed,
-      });
+      await updateDoc(
+        doc(db, `users/${auth.currentUser.providerData[0].uid}/tasks/${id}`),
+        {
+          completed: !completed,
+        }
+      );
       if (this.state.cTask?.id === id) {
         let ref = { ...this.state.cTask };
         const c = !completed;
@@ -321,7 +337,10 @@ class TimerPage extends Component {
   onPomodoroElapsed = (e) => {
     (async () => {
       await updateDoc(
-        doc(db, `users/${auth.currentUser.uid}/tasks/${this.state.cTask.id}`),
+        doc(
+          db,
+          `users/${auth.currentUser.providerData[0].uid}/tasks/${this.state.cTask.id}`
+        ),
         {
           pomodoroElapsed: this.state.cTask.pomodoroElapsed + 1,
         }
@@ -337,18 +356,21 @@ class TimerPage extends Component {
   ////////////////  SETTINGS
   ///////////////////////////////////
   loadSettings = () => {
-    onSnapshot(doc(db, 'users', auth.currentUser.uid), (doc) => {
-      console.log('Current data: ', doc.data());
-      const source = doc.metadata.fromCache ? 'local cache' : 'server';
-      console.log('Data came from ' + source);
-      this.setState({ settings: doc.data() }, () => {
-        //apply settings
-        //offline mode
-        if (!this.state.settings.offlineMode)
-          (async () => await enableNetwork(db))();
-        else (async () => await disableNetwork(db))();
-      });
-    });
+    onSnapshot(
+      doc(db, 'users', auth.currentUser.providerData[0].uid),
+      (doc) => {
+        console.log('Current data: ', doc.data());
+        const source = doc.metadata.fromCache ? 'local cache' : 'server';
+        console.log('Data came from ' + source);
+        this.setState({ settings: doc.data() }, () => {
+          //apply settings
+          //offline mode
+          if (!this.state.settings?.offlineMode)
+            (async () => await enableNetwork(db))();
+          else (async () => await disableNetwork(db))();
+        });
+      }
+    );
   };
 
   toggleOfflineMode = (e) => {
@@ -357,7 +379,7 @@ class TimerPage extends Component {
     this.setState({ settings: settings });
 
     (async () => {
-      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+      await setDoc(doc(db, 'users', auth.currentUser.providerData[0].uid), {
         offlineMode: e.target.checked,
       });
       console.log('settings updated');
@@ -462,7 +484,7 @@ class TimerPage extends Component {
                     <Switch
                       edge="end"
                       onChange={(e) => this.toggleOfflineMode(e)}
-                      checked={this.state.settings.offlineMode}
+                      checked={this.state.settings?.offlineMode}
                       inputProps={{
                         'aria-labelledby': 'switch-list-label-wifi',
                       }}
