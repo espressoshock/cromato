@@ -17,13 +17,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import InfoIcon from '@material-ui/icons/Info';
 import OfflineBoltIcon from '@material-ui/icons/OfflineBolt';
+import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
 
 import { initializeApp } from 'firebase/app';
@@ -37,6 +36,7 @@ import { getFirestore, updateDoc } from 'firebase/firestore';
 
 import {
   collection,
+  setDoc,
   addDoc,
   doc,
   query,
@@ -44,7 +44,11 @@ import {
   serverTimestamp,
   deleteDoc,
 } from 'firebase/firestore';
-import { ListItemIcon, ListItemSecondaryAction } from '@material-ui/core';
+import {
+  enableIndexedDbPersistence,
+  disableNetwork,
+  enableNetwork,
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3pQsx-EOXyJoS4ckyTl-WUfULEJtBGJU',
@@ -68,7 +72,7 @@ class TimerPage extends Component {
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
-    settingsModalOpen: true,
+    settingsModalOpen: false,
     settings: {
       offlineMode: false,
     },
@@ -79,11 +83,25 @@ class TimerPage extends Component {
         this.setState({ auth: true });
         this.setState({ owner: user });
 
+        //enable persistence
+        enableIndexedDbPersistence(db).catch((err) => {
+          if (err.code === 'failed-precondition') {
+            console.log('error failed-precondition');
+          } else if (err.code === 'unimplemented') {
+            console.log('error unimplemented');
+          }
+        });
+
+        //load settings
+        this.loadSettings();
+
         const q = query(collection(db, `users/${auth.currentUser.uid}/tasks`));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const tTasks = [];
           querySnapshot.forEach((doc) => {
             tTasks.push({ ...doc.data(), id: doc.id });
+            const source = doc.metadata.fromCache ? 'local cache' : 'server';
+            console.log('Data came from ' + source);
           });
           console.log('docs: ', tTasks);
           this.setState({ tasks: tTasks });
@@ -302,11 +320,28 @@ class TimerPage extends Component {
   ///////////////////////////////////
   ////////////////  SETTINGS
   ///////////////////////////////////
+  loadSettings = () => {
+    onSnapshot(doc(db, 'users', auth.currentUser.uid), (doc) => {
+      console.log('Current data: ', doc.data());
+      const source = doc.metadata.fromCache ? 'local cache' : 'server';
+      console.log('Data came from ' + source);
+      this.setState({ settings: doc.data() });
+    });
+  };
+
   toggleOfflineMode = (e) => {
     const settings = { ...this.state.setttings };
     settings.offlineMode = e.target.checked;
-    console.log(e.target.checked);
     this.setState({ settings: settings });
+
+    (async () => {
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        offlineMode: e.target.checked,
+      });
+      console.log('settings updated');
+      if (!e.target.checked) (async () => await enableNetwork(db))();
+      else (async () => await disableNetwork(db))();
+    })();
   };
   render() {
     return (
@@ -366,7 +401,7 @@ class TimerPage extends Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           maxWidth={'xs'}
-          fullWidth="true"
+          fullWidth={true}
         >
           <DialogTitle id="alert-dialog-title">
             {'Settings'}
