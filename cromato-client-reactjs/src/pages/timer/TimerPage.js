@@ -433,6 +433,36 @@ class TimerPage extends Component {
       ctask.pomodoroElapsed = ctask.pomodoroElapsed + 1;
       this.setState({ cTask: ctask });
     })();
+    //update global stat
+    (async () => {
+      const tOverdue =
+        this.state.cTask.pomodoroElapsed >= this.state.cTask.pomodoroEstimated;
+      const overdueIncrement =
+        Number.isNaN(this.state.settings.overdue) ||
+        this.state.settings.overdue === undefined
+          ? 1
+          : this.state.settings.overdue + 1;
+      await setDoc(
+        doc(db, 'users', auth.currentUser.providerData[0].uid),
+        {
+          pomodoroCompleted:
+            Number.isNaN(this.state.settings.pomodoroCompleted) ||
+            this.state.settings.pomodoroCompleted === undefined
+              ? 1
+              : this.state.settings.pomodoroCompleted + 1,
+        },
+        { merge: true }
+      );
+      if (tOverdue) {
+        await setDoc(
+          doc(db, 'users', auth.currentUser.providerData[0].uid),
+          {
+            overdueTasks: overdueIncrement,
+          },
+          { merge: true }
+        );
+      }
+    })();
   };
   ///////////////////////////////////
   ////////////////  SETTINGS
