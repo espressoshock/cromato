@@ -74,7 +74,7 @@ class TimerPage extends Component {
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
     settingsModalOpen: false,
-    reportModalOpen: false,
+    reportModalOpen: true,
     settings: {
       offlineMode: false,
     },
@@ -143,6 +143,9 @@ class TimerPage extends Component {
   };
   closeReportModal = (e) => {
     this.setState({ reportModalOpen: false });
+  };
+  reportModalOpened = (e) => {
+    console.log('opened');
   };
   login = (e) => {
     signInWithPopup(auth, provider)
@@ -632,8 +635,9 @@ class TimerPage extends Component {
           onClose={(e) => this.closeReportModal(e)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          maxWidth={'xs'}
+          maxWidth={'xl'}
           fullWidth={true}
+          onEntered={(e) => this.reportModalOpened()}
         >
           <DialogTitle id="alert-dialog-title">
             {'Report'}
@@ -648,6 +652,38 @@ class TimerPage extends Component {
           <DialogContent dividers>
             <DialogContent id="alert-dialog-description">
               Here are the statistics
+              <div className="metrics-wrapper">
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">7</div>
+                  <div className="description">Pomodoro completed</div>
+                </div>
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">7</div>
+                  <div className="description">Pomodoro estimated</div>
+                </div>
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">1</div>
+                  <div className="description">Task completed</div>
+                </div>
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">3</div>
+                  <div className="description">Task created</div>
+                </div>
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">3</div>
+                  <div className="description">Task deleted</div>
+                </div>
+                <div className="card">
+                  <div className="icon"></div>
+                  <div className="value">33.7</div>
+                  <div className="description">Hours focused</div>
+                </div>
+              </div>
             </DialogContent>
           </DialogContent>
           <DialogActions>
