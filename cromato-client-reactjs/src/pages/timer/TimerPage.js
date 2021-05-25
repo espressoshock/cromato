@@ -74,6 +74,7 @@ class TimerPage extends Component {
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
     settingsModalOpen: false,
+    reportModalOpen: false,
     settings: {
       offlineMode: false,
     },
@@ -136,6 +137,12 @@ class TimerPage extends Component {
   };
   closeSettingsModal = (e) => {
     this.setState({ settingsModalOpen: false });
+  };
+  openReportModal = (e) => {
+    this.setState({ reportModalOpen: true });
+  };
+  closeReportModal = (e) => {
+    this.setState({ reportModalOpen: false });
   };
   login = (e) => {
     signInWithPopup(auth, provider)
@@ -527,7 +534,7 @@ class TimerPage extends Component {
                 text="Report"
                 icon={ReportIcon}
                 size="m"
-                onButtonClicked={(e) => null}
+                onButtonClicked={(e) => this.openReportModal(e)}
               />
               <ActionButton
                 text="Settings"
@@ -613,6 +620,39 @@ class TimerPage extends Component {
           <DialogActions>
             <Button
               onClick={(e) => this.closeSettingsModal(e)}
+              color="primary"
+              autoFocus
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={this.state.reportModalOpen}
+          onClose={(e) => this.closeReportModal(e)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          maxWidth={'xs'}
+          fullWidth={true}
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Report'}
+            <IconButton
+              aria-label="close"
+              onClick={(e) => this.closeReportModal(e)}
+              className="modal-close-button"
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent dividers>
+            <DialogContent id="alert-dialog-description">
+              Here are the statistics
+            </DialogContent>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={(e) => this.closeReportModal(e)}
               color="primary"
               autoFocus
             >
