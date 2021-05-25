@@ -6,7 +6,7 @@
 ### Grade 3
 
 - [x]  Version control: GitHub | `🏷️req 3.1`
-- [ ] NodeJS backend | `🏷️req 3.2`
+- [x] NodeJS backend | `🏷️req 3.2`
 - [x] Front-end: ReactJS | `🏷️req 3.3`
 - [x] Persistent storage: Firebase `🏷️req 3.4`
 - [x] Purpose: time management | `🏷️req 3.5`
@@ -17,8 +17,8 @@
 ### Grade 4
 
 - [x] Data collection: add tasks (todos)
-   - [ ] statistics function:  productivity performances (tasks  created/completed, pomodoro run etc...) | `🏷️req 4.9`
-- [ ]  Separate view to display productivity performance (display statistics) | `🏷️req 4.10`
+   - [x] statistics function:  productivity performances (tasks  created/completed, pomodoro run etc...) | `🏷️req 4.9`
+- [x]  Separate view to display productivity performance (display statistics) | `🏷️req 4.10`
 - [ ]  NodeJS _OPEN REST API_ that provides statistics | `🏷️req 4.11`
 - [x]  " Distinctive Cloud Technology ": Serverless functions |  `🏷️req 4.12`
 
@@ -30,5 +30,5 @@
    - [ ]  build/test with GH Actions
 - [x]  React Offline capabilities |  `🏷️req 4.15`
    - [x]  You can add/remove/edit tasks (todos) while offline and push them as soon as you go online
-- [ ]  OPEN REST API (statistics) must verify the user identity before serving the request |  `🏷️req 4.16`
+- [x]  OPEN REST API (statistics) must verify the user identity before serving the request |  `🏷️req 4.16`
 - [ ]  In-depth documentation on readme with technical explanation |  `🏷️req 4.17`
