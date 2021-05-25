@@ -3,16 +3,15 @@ const express = require('express');
 const passport = require('passport');
 const path = require('path');
 const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 require('./passport-setup');
 
 const app = express();
 
-// Serve the static files from the React app
-app.use(express.static(path.join(__dirname, 'cromato-client-reactjs/build')));
-
-//passportjs
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 //cokie session
 app.use(
@@ -21,38 +20,42 @@ app.use(
     keys: ['key1', 'key2'],
   })
 );
+//passportjs
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Serve the static files from the React app
+app.use(express.static(path.join(__dirname, 'cromato-client-reactjs/build')));
 
 const isAuth = (req, res, next) => {
-  console.log(req.user);
+  //console.log('req-user:', req.user);
   if (req.user) next();
   else res.sendStatus(401);
 };
 
-app.get('/api/fail', (req, res) =>
-  res.send('Auth failed - You need to auth before accessing the API')
-);
-app.get(
-  '/api/auth',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
 app.get('/api/loggedout', (req, res) => res.send('You log out'));
-app.get('/api/statistics', (req, res) => {
-  res.send('Auth successful - here are your statistics: ');
-});
 app.get('/api/signout', (req, res) => {
   req.session = null; // destroy session
   req.logout();
   res.redirect('/api/loggedout');
 });
-app.get('/api', (req, res) => {
-  //if (isAuth) res.redirect('/api/statistics');
-  //else res.redirect('/api/auth');
-});
 
+app.get('/api/fail', (req, res) =>
+  res.send('Auth failed - You need to auth before accessing the API')
+);
+app.get('/api/statistics', isAuth, (req, res) => {
+  console.log('req-user:', req.user);
+  res.send('Auth successful - here are your statistics: ');
+});
+app.get(
+  '/api/auth',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 app.get(
   '/api/auth/callback',
   passport.authenticate('google', { failureRedirect: 'api/fail' }),
   function (req, res) {
+    //console.log('callback: ', req.user);
     // Successful authentication, redirect home.
     res.redirect('/api/statistics');
   }
