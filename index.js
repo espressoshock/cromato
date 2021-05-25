@@ -9,21 +9,20 @@ require('./passport-setup');
 
 //firebase admin sdk
 const admin = require('firebase-admin');
-const serviceAccount = {
-  type: process.env.FASK_TYPE,
-  project_id: process.env.FASK_PROJECT_ID,
-  private_key_id: process.env.FASK_PRIVATE_KEY_ID,
-  private_key: process.env.FASK_PRIVATE_KEY,
-  client_email: process.env.FASK_CLIENT_MAIL,
-  client_id: process.env.FASK_CLIENT_ID,
-  auth_uri: process.env.FASK_AUTH_URI,
-  token_uri: process.env.FASK_TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.FASK_CERT_URL_PROVIDER,
-  client_x509_cert_url: process.env.FASK_CERT_URL_CLIENT,
-};
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    type: process.env.FASK_TYPE,
+    project_id: process.env.FASK_PROJECT_ID,
+    private_key_id: process.env.FASK_PRIVATE_KEY_ID,
+    private_key: process.env.FASK_PRIVATE_KEY,
+    client_email: process.env.FASK_CLIENT_MAIL,
+    client_id: process.env.FASK_CLIENT_ID,
+    auth_uri: process.env.FASK_AUTH_URI,
+    token_uri: process.env.FASK_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.FASK_CERT_URL_PROVIDER,
+    client_x509_cert_url: process.env.FASK_CERT_URL_CLIENT,
+  }),
 });
 
 const db = admin.firestore();
