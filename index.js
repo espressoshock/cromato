@@ -3,7 +3,6 @@ const express = require('express');
 const passport = require('passport');
 const path = require('path');
 const cookieSession = require('cookie-session');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 require('./passport-setup');
 
@@ -12,27 +11,17 @@ const admin = require('firebase-admin');
 
 admin.initializeApp({
   credential: admin.credential.cert({
-    type: process.env.FASK_TYPE,
-    project_id: process.env.FASK_PROJECT_ID,
-    private_key_id: process.env.FASK_PRIVATE_KEY_ID,
-    private_key: process.env.FASK_PRIVATE_KEY,
-    client_email: process.env.FASK_CLIENT_MAIL,
-    client_id: process.env.FASK_CLIENT_ID,
-    auth_uri: process.env.FASK_AUTH_URI,
-    token_uri: process.env.FASK_TOKEN_URI,
-    auth_provider_x509_cert_url: process.env.FASK_CERT_URL_PROVIDER,
-    client_x509_cert_url: process.env.FASK_CERT_URL_CLIENT,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
   }),
 });
-
 const db = admin.firestore();
-
 const app = express();
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 //cokie session
 app.use(
   cookieSession({
@@ -56,7 +45,6 @@ app.get('/api', (req, res) => {
   if (req.user) res.redirect('/api/statistics');
   //we're auth
   else res.redirect('/api/auth'); //we need auth
-  res.redirect('/api/loggedout');
 });
 
 app.get('/api/loggedout', (req, res) =>
@@ -76,6 +64,7 @@ app.get('/api/fail', (req, res) =>
 );
 app.get('/api/statistics', isAuth, (req, res) => {
   //console.log('req-user:', req.user);
+
   (async () => {
     const statisticSnapshot = await db
       .collection('users')
