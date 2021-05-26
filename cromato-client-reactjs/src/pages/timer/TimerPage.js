@@ -88,7 +88,7 @@ class TimerPage extends Component {
     avatarContextMenuAE: null,
     taskListBindingHandle: null,
     timerClearFlag: false, //special clearing flag
-    settingsModalOpen: true,
+    settingsModalOpen: false,
     reportModalOpen: false,
     settings: {
       offlineMode: false,
@@ -165,12 +165,48 @@ class TimerPage extends Component {
   reportModalOpened = (e) => {
     console.log('opened');
   };
+  reEnableHooks = () => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ auth: true });
+        this.setState({ owner: user });
+
+        //load settings
+        this.loadSettings();
+
+        const q = query(
+          collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`)
+        );
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const tTasks = [];
+          querySnapshot.forEach((doc) => {
+            tTasks.push({ ...doc.data(), id: doc.id });
+            const source = doc.metadata.fromCache ? 'local cache' : 'server';
+            console.log('Data came from ' + source);
+            if (doc.metadata.fromCache)
+              this.showNotification(
+                'You are offline, data cached locally',
+                'dark'
+              );
+          });
+          console.log('docs: ', tTasks);
+          this.setState({ tasks: tTasks });
+          if (this.state.cTask === undefined)
+            this.setState({ cTask: tTasks[0] });
+        });
+        this.setState({ taskListBindingHandle: unsubscribe });
+      } else {
+        this.setState({ auth: false });
+      }
+    });
+  };
   login = (e) => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         console.log(credential);
         console.log(auth.currentUser);
+        this.reEnableHooks();
       })
       .catch((error) => {
         console.log(error);
@@ -496,7 +532,7 @@ class TimerPage extends Component {
   ////////////////  SETTINGS
   ///////////////////////////////////
   loadSettings = () => {
-    const unsub = onSnapshot(
+    onSnapshot(
       doc(db, 'users', auth.currentUser.providerData[0].uid),
       (doc) => {
         console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
