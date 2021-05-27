@@ -63,8 +63,6 @@ app.get('/api/fail', (req, res) =>
   })
 );
 app.get('/api/statistics', isAuth, (req, res) => {
-  //console.log('req-user:', req.user);
-
   (async () => {
     const statisticSnapshot = await db
       .collection('users')
@@ -77,15 +75,14 @@ app.get('/api/statistics', isAuth, (req, res) => {
       console.log('statistic-', statisticSnapshot.data());
     let tasksData = [];
     tasksSnapshot.forEach((doc) => {
-      //console.log('tasks-', doc.data());
-      tasksData.push(doc);
+      tasksData.push(doc.data());
     });
 
     res.json({
       status: 'account active',
       reponseStatus: 200,
       user: req.user,
-      statistics: statisticSnapshot,
+      statistics: statisticSnapshot.data(),
       tasksData: tasksData,
     });
   })();
