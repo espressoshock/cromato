@@ -237,6 +237,11 @@
   clip-path: url(#timerbar-clip);
   opacity: 1;
 }
+.pomodoro-timer.active .svg-wrapper .timer-scale {
+  transform: translate(16px, 486px);
+  clip-path: url(#timerbar-clip);
+  opacity: 1;
+}
 .pomodoro-timer.active .svg-wrapper .interactive-timerbar {
   transform: translateY(14px);
   clip-path: url(#timerbar-clip);
@@ -244,6 +249,16 @@
 .pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w {
   transform: translateX(-880px);
 }
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w.s10 {
+  transform: translateX(-122px) !important;
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w.m25 {
+  transform: translateX(-880px) !important;
+}
+.pomodoro-timer.active .svg-wrapper .interactive-timerbar .i-timerbar-w.m15 {
+  transform: translateX(-357px) !important;
+}
+
 .pomodoro-timer.active .svg-wrapper #timerbar-clip {
   transform: translateY(-1px);
 }
@@ -505,14 +520,35 @@
   .svg-wrapper
   .interactive-timerbar
   .i-timerbar-w.working {
-  animation-name: timerbar-working;
-  animation-duration: 11s; /* RESET ME */
   animation-delay: 0s;
   animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+.pomodoro-timer.working
+  .svg-wrapper
+  .interactive-timerbar
+  .i-timerbar-w.working.m25 {
+  animation-name: timerbar-working-25;
+  animation-duration: 1500s;
+}
+.pomodoro-timer.working
+  .svg-wrapper
+  .interactive-timerbar
+  .i-timerbar-w.working.m15 {
+  animation-name: timerbar-working-15;
+  animation-duration: 900s;
+  animation-play-state: running;
+}
+.pomodoro-timer.working
+  .svg-wrapper
+  .interactive-timerbar
+  .i-timerbar-w.working.s10 {
+  animation-name: timerbar-working-10;
+  animation-duration: 10s;
 }
 .pomodoro-timer .paused {
-  animation-play-state: paused;
+  animation-play-state: paused !important;
 }
 /* ===============
      animations-keyframes
@@ -606,13 +642,32 @@
     transform: translate(222px, 514px) scale(1);
   }
 }
-@keyframes timerbar-working {
+@keyframes timerbar-working-15 {
+  0% {
+    transform: translateX(-357px);
+  }
+  /*   10% {
+    transform: translateX(-880px);
+  } */
+  100% {
+    transform: translateX(373px);
+  }
+}
+@keyframes timerbar-working-10 {
+  0% {
+    transform: translateX(-122px);
+  }
+  100% {
+    transform: translateX(373px);
+  }
+}
+@keyframes timerbar-working-25 {
   0% {
     transform: translateX(-880px);
   }
-  10% {
+  /*   10% {
     transform: translateX(-880px);
-  }
+  } */
   100% {
     transform: translateX(373px);
   }
