@@ -584,7 +584,7 @@ class TimerPage extends Component {
   showNotification = (message, mode = 'light') => {
     this.setState({ snackbarMessage: message });
     this.setState({ snackbarVisibility: true });
-    if (mode !== 'light') this.setState({ snackbarMode: mode });
+    this.setState({ snackbarMode: mode });
   };
   hideNotification = () => {
     this.setState({ snackbarVisibility: false });
