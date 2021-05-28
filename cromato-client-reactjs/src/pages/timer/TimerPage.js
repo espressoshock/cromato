@@ -295,6 +295,7 @@ class TimerPage extends Component {
         pomodoroEstimated: task.pomodoroEstimated,
         completed: false,
       });
+      this.showNotification('Task added');
       (async () => {
         const docRef = await addDoc(
           collection(db, `users/${auth.currentUser.providerData[0].uid}/tasks`),
